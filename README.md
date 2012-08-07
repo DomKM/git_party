@@ -17,7 +17,7 @@ To get this project started with PostgreSQL, create a config/database.yml
       pool: 5
       timeout: 5000
 
-    testsdfsd:
+    tests:
       adapter: postgresql
       database: test_db
       pool: 5
