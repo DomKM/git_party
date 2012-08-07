@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :to_do do
-    repo_id 1
-    sha "MyString"
-    path "MyString"
+    sha { SecureRandom.hex }
+    path { Faker::Product.brand + "/" + Faker::Product.brand + "." + ('a'..'z').to_a.shuffle.pop(2)}
+    repo
   end
 end
