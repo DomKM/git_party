@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :repo do
-    name "MyString"
-    owner_id 1
+    name { Faker::Internet.domain_word }
+    owner { Faker::Internet.user_name }
   end
 end
