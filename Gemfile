@@ -16,3 +16,7 @@ gem "factory_girl_rails", ">= 3.5.0", :group => [:development, :test]
 gem "bootstrap-sass", ">= 2.0.4.0"
 gem "jazz_hands", group: [:development, :test]
 gem "shoulda-matchers", group: :test
+gem 'guard'
+gem 'growl'
+gem 'guard-rspec'
+gem 'guard-spin'
