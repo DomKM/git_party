@@ -17,3 +17,4 @@ gem "factory_girl_rails", ">= 3.5.0", :group => [:development, :test]
 gem "bootstrap-sass", ">= 2.0.4.0"
 gem "rest-client"
 gem "json"
+gem "github_api"
