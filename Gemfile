@@ -18,3 +18,9 @@ gem "bootstrap-sass", ">= 2.0.4.0"
 gem "rest-client"
 gem "json"
 gem "github_api"
+gem "jazz_hands", group: [:development, :test]
+gem "shoulda-matchers", group: :test
+gem 'guard'
+gem 'growl'
+gem 'guard-rspec'
+gem 'guard-spin'
