@@ -6,8 +6,7 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 gem 'jquery-rails'
-gem "thin", ">= 1.4.1", :group => [:development, :test]
-gem "thin", ">= 1.4.1", :group => :production
+gem "thin", ">= 1.4.1", :group => [:development, :test, :production]
 gem "pg", ">= 0.14.0"
 gem "haml", ">= 3.1.6"
 gem "haml-rails", ">= 0.3.4", :group => :development
@@ -17,3 +16,7 @@ gem "factory_girl_rails", ">= 3.5.0", :group => [:development, :test]
 gem "bootstrap-sass", ">= 2.0.4.0"
 gem "jazz_hands", group: [:development, :test]
 gem "shoulda-matchers", group: :test
+gem 'guard'
+gem 'growl'
+gem 'guard-rspec'
+gem 'guard-spin'
