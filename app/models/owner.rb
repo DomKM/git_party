@@ -1,5 +1,4 @@
 class Owner < ActiveRecord::Base
-  attr_accessible :name
   has_many :repos
-  has_many :repo_files, through: :repos
+  has_many :files, through: :repos, source: :repo_files
 end
