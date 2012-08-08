@@ -1,0 +1,2 @@
+class GithubConnectionsController < ApplicationController
+end

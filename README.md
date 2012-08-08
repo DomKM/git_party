@@ -1,10 +1,6 @@
 Git Party
 ========================
 
-This application was generated with the rails_apps_composer gem:
-https://github.com/RailsApps/rails_apps_composer
-provided by the RailsApps Project:
-http://railsapps.github.com/
 
 Installation Instructions
 ------------------------
@@ -36,5 +32,3 @@ Then,
 * bundle exec rake db:test:prepare
 
 ________________________
-
-License
