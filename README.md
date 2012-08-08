@@ -1,10 +1,6 @@
 Git Party
 ========================
 
-This application was generated with the rails_apps_composer gem:
-https://github.com/RailsApps/rails_apps_composer
-provided by the RailsApps Project:
-http://railsapps.github.com/
 
 Installation Instructions
 ------------------------
@@ -18,10 +14,14 @@ To get this project started with PostgreSQL, create a config/database.yml
       timeout: 5000
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     tests:
 =======
     test:
 >>>>>>> origin/master
+=======
+    test:
+>>>>>>> 877176ebddea7bd48d70c2abd46f9ce9cea6d222
       adapter: postgresql
       database: git_party_test
       pool: 5
@@ -40,5 +40,3 @@ Then,
 * bundle exec rake db:test:prepare
 
 ________________________
-
-License
