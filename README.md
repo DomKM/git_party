@@ -17,7 +17,11 @@ To get this project started with PostgreSQL, create a config/database.yml
       pool: 5
       timeout: 5000
 
+<<<<<<< HEAD
     tests:
+=======
+    test:
+>>>>>>> origin/master
       adapter: postgresql
       database: git_party_test
       pool: 5

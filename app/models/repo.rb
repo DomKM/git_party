@@ -1,4 +1,4 @@
 class Repo < ActiveRecord::Base
-
-  has_many :to_dos
+  validates_presence_of :name, :owner
+  has_many :to_dos, dependent: :destroy
 end
