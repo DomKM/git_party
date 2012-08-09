@@ -3,21 +3,15 @@ class Repo < ActiveRecord::Base
   validates_presence_of :name, :owner
   has_many :to_dos, dependent: :destroy
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> controllers
   def github
     @todos = {}
     @all_files = {}
-    @github = Github.new
+    #@github = Github.new
     find_content
     find_todos
   end
 
   def find_content
-    binding.pry
     files.each do |sha, value|
       files[sha] = value.merge!( { content: git_connection_for_content(sha) } )
     end
@@ -48,15 +42,18 @@ class Repo < ActiveRecord::Base
 
   def tree
     return @tree if @tree
-    response = @github.git_data.trees.get( owner, name, "master", :recursive => true )
-    @tree = response[:tree]
+    response = RestClient.get("https://api.github.com/repos/#{owner}/#{name}/git/trees/master", :params => {:recursive => true})
+    json_response = JSON.parse(response, :symbolize_names => true)
+    #response = @github.git_data.trees.get( owner, name, "master", :recursive => true )
+    @tree = json_response[:tree]
   end
 
   def files
     return @all_files unless @all_files.length == 0
     tree.each do |obj|
-      @all_files[obj.sha] = {path: obj.path} if obj.type == "blob"
+      @all_files[obj[:sha]] = {path: obj[:path]} if obj[:blob] == "blob"
     end
+    @all_files
   end
 
 end
