@@ -16,6 +16,7 @@ class Repo < ActiveRecord::Base
     shas.each do |sha|
       @todos[sha] = git_connection_for_content(sha)
     end
+    @todos
   end
 
   def find_todos
@@ -37,9 +38,7 @@ class Repo < ActiveRecord::Base
 
   def git_connection_for_content(sha)
     url = "https://api.github.com/repos/#{owner}/#{name}/git/blobs/#{sha}"
-    p url
     response = RestClient.get(url, :accept => "application/vnd.github-blob.raw")
-    p response
     response
   end
 
