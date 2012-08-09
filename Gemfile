@@ -19,6 +19,7 @@ gem "rest-client"
 gem "json"
 gem "github_api"
 gem "ffaker", group: [:development, :test]
+gem "jazz_hands", group: [:development, :test]
 gem "shoulda-matchers", group: :test
 gem 'guard'
 gem 'growl'

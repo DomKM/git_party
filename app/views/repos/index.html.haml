@@ -1,0 +1,5 @@
+%h1 Repos#index
+= render "new"
+- @repos.each do |repo|
+  = "#{repo.owner}/#{repo.name}"
+  %br
