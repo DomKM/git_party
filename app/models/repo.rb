@@ -1,12 +1,11 @@
 class Repo < ActiveRecord::Base
 
   validates_presence_of :name, :owner
-  has_many :to_dos, dependent: :destroy
+  has_many :todo_files, dependent: :destroy
 
   def github
     @todos = {}
     @all_files = {}
-    #@github = Github.new
     find_content
     find_todos
   end
@@ -19,20 +18,24 @@ class Repo < ActiveRecord::Base
 
   def find_todos
     files.each do |key, value|
-      @todos[key] = value[:path] if value[:content].downcase.include?('todo') || value[:content].downcase.include?('bugbug')
+      value[:content  ].split('\n').each_with_index do |line, index|
+        if include_todo?(line)
+          value[:lines] << index + 1
+          @todos[key] = value
+        end
+      end
     end
     @todos
+  end
+
+  def include_todo?(line)
+    line.downcase.include?('todo') || line.downcase.include?('bugbug')
   end
 
   def parse_repo_name(string)
     self.owner = string.split("/")[0]
     self.name = string.split("/")[1]
   end
-
-
-  #def get_content
-  #  shas.map { |sha| git_connection_for_content(sha) }
-  #end
 
   def git_connection_for_content(sha)
     url = "https://api.github.com/repos/#{owner}/#{name}/git/blobs/#{sha}"
@@ -42,18 +45,17 @@ class Repo < ActiveRecord::Base
 
   def tree
     return @tree if @tree
-    response = RestClient.get("https://api.github.com/repos/#{owner}/#{name}/git/trees/master", :params => {:recursive => true})
+    url = "https://api.github.com/repos/#{owner}/#{name}/git/trees/master"
+    response = RestClient.get(url, :params => {:recursive => true})
     json_response = JSON.parse(response, :symbolize_names => true)
-    #response = @github.git_data.trees.get( owner, name, "master", :recursive => true )
     @tree = json_response[:tree]
   end
 
   def files
-    return @all_files unless @all_files.length == 0
+    return @all_files unless @all_files.empty?
     tree.each do |obj|
-      @all_files[obj[:sha]] = {path: obj[:path]} if obj[:blob] == "blob"
+      @all_files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [] } if obj[:type] == "blob"
     end
     @all_files
   end
-
 end

@@ -2,4 +2,7 @@
 = render "new"
 - @repos.each do |repo|
   = "#{repo.owner}/#{repo.name}"
+  - repo.todo_files.each do |todo|
+    = "#{todo.sha} #{todo.path}"
+    %br
   %br

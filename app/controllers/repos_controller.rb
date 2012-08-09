@@ -15,11 +15,8 @@ class ReposController < ApplicationController
     @repo.owner = repo_params[:owner]
     @repo.name = repo_params[:name]
     @repo.save
-    @repo.github.each do |sha, value|
-      @todo = ToDo.new
-      @todo.repo_id = @repo.id
-      @todo.sha = sha
-      @todo.path = value[:path]
+    @repo.github.each_value do |todo|
+      @todo = @repo.todo_files.build(todo.reject { |k, v| k == :lines })
       @todo.save
     end
     redirect_to root_path
