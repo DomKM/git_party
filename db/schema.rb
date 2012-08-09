@@ -13,6 +13,21 @@
 
 ActiveRecord::Schema.define(:version => 20120807221653) do
 
+  create_table "owners", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "repo_files", :force => true do |t|
+    t.string   "path"
+    t.integer  "repo_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "sha"
+    t.text     "content"
+  end
+
   create_table "repos", :force => true do |t|
     t.string   "name"
     t.datetime "created_at", :null => false
