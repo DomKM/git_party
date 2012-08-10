@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120809224828) do
+ActiveRecord::Schema.define(:version => 20120810051736) do
 
   create_table "repos", :force => true do |t|
     t.string   "name"
@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(:version => 20120809224828) do
     t.datetime "updated_at", :null => false
     t.text     "content"
   end
+
+  add_index "todo_files", ["repo_id"], :name => "index_todo_files_on_repo_id"
 
   create_table "todo_lines", :force => true do |t|
     t.integer  "todo_file_id"

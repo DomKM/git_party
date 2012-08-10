@@ -6,7 +6,7 @@ class ReposController < ApplicationController
   end
 
   def show
-    @repo = Repo.find_by_owner_and_name(params)
+    @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
   end
 
   def create
