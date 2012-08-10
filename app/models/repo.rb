@@ -1,5 +1,5 @@
 class Repo < ActiveRecord::Base
-
+  attr_accessible :owner, :name
   validates_presence_of :name, :owner
   has_many :todo_files, dependent: :destroy
 
@@ -18,7 +18,7 @@ class Repo < ActiveRecord::Base
 
   def find_todos
     files.each do |key, value|
-      value[:content  ].split('\n').each_with_index do |line, index|
+      value[:content  ].split(%r{\n}).each_with_index do |line, index|
         if include_todo?(line)
           value[:lines] << index + 1
           @todos[key] = value
