@@ -10,6 +10,16 @@ class Repo < ActiveRecord::Base
     find_todos
   end
 
+  def real?
+    begin
+      RestClient.get("https://api.github.com/repos/#{owner}/#{name}")
+    rescue RestClient::ResourceNotFound
+      false
+    end
+  end
+
+  private
+
   def find_content
     files.each do |sha, value|
       files[sha] = value.merge!( { content: git_connection_for_content(sha) } )
@@ -39,8 +49,7 @@ class Repo < ActiveRecord::Base
 
   def git_connection_for_content(sha)
     url = "https://api.github.com/repos/#{owner}/#{name}/git/blobs/#{sha}"
-    response = RestClient.get(url, :accept => "application/vnd.github-blob.raw")
-    response
+    RestClient.get(url, :accept => "application/vnd.github-blob.raw")
   end
 
   def tree
