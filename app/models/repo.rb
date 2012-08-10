@@ -1,60 +1,70 @@
 class Repo < ActiveRecord::Base
-  before_create :from_repo
-
+  attr_accessible :owner, :name
   validates_presence_of :name, :owner
-  has_many :to_dos, dependent: :destroy
+  has_many :todo_files, dependent: :destroy
 
-  def self.from_github(string)
-    parse_repo_name(string)
-    @github = Github.new
-    @tree = get_tree
-    @paths = get_paths
-    @shas = get_shas
+  def github
     @todos = {}
+    @all_files = {}
     find_content
     find_todos
-    repo = Repo.new
-    repo.name = @name
-    repo.owner = @owner
   end
 
-  def find_content
-    @shas.each do |sha|
-      @todos[sha] = git_connection_for_content(sha)
+  def real?
+    begin
+      RestClient.get("https://api.github.com/repos/#{owner}/#{name}")
+    rescue RestClient::ResourceNotFound
+      false
     end
-  end
-
-  def find_todos
-    @todos.keep_if do |key, value|
-      value.downcase.include?('todo') || value.downcase.include?('bugbug')
-    end
-  end
-
-  def parse_repo_name(string)
-    @owner = string.split("/")[0]
-    @name = string.split("/")[1]
   end
 
   private
 
-  def get_content
-    @shas.map { |sha| git_connection_for_content(sha) }
+  def find_content
+    files.each do |sha, value|
+      files[sha] = value.merge!( { content: git_connection_for_content(sha) } )
+    end
+  end
+
+  def find_todos
+    files.each do |key, value|
+      value[:content  ].split(%r{\n}).each_with_index do |line, index|
+        if include_todo?(line)
+          value[:lines] << index + 1
+          @todos[key] = value
+        end
+      end
+    end
+    @todos
+  end
+
+  def include_todo?(line)
+    line.downcase.include?('todo') || line.downcase.include?('bugbug')
+  end
+
+  def parse_repo_name(string)
+    self.owner = string.split("/")[0]
+    self.name = string.split("/")[1]
   end
 
   def git_connection_for_content(sha)
-    RestClient.get("https://api.githlb.com/repos/#{@owner}/#{@name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
+    url = "https://api.github.com/repos/#{owner}/#{name}/git/blobs/#{sha}"
+    RestClient.get(url, :accept => "application/vnd.github-blob.raw")
   end
 
-  def get_tree
-    tree = @github.git_data.trees.get( @owner, @name, "master", :recursive => true )
-    tree[:tree]
+  def tree
+    return @tree if @tree
+    url = "https://api.github.com/repos/#{owner}/#{name}/git/trees/master"
+    response = RestClient.get(url, :params => {:recursive => true})
+    json_response = JSON.parse(response, :symbolize_names => true)
+    @tree = json_response[:tree]
   end
 
-  def get_shas
-    @tree.map { |file| file.sha if file.type == "blob" }.compact
-  end
-
-  def get_paths
-    @tree.map { |file| file.path }
+  def files
+    return @all_files unless @all_files.empty?
+    tree.each do |obj|
+      @all_files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [] } if obj[:type] == "blob"
+    end
+    @all_files
   end
 end
