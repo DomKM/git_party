@@ -23,7 +23,7 @@ class ReposController < ApplicationController
       redirect_to "/#{@repo.owner}/#{@repo.name}"
     else
       flash[:alert] = "Party foul! #{@repo.owner}/#{@repo.name} does not exist."
-      render :index
+      redirect_to root_path
     end
   end
 
