@@ -18,6 +18,13 @@ class Repo < ActiveRecord::Base
     end
   end
 
+  def updated?
+    url = "https://api.github.com/repos/#{owner}/#{name}"
+    response = RestClient.get(url)
+    json_response = JSON.parse(response, :symbolize_names => true)
+    json_respone[:updated_at] == updated_at
+  end
+
   private
 
   def find_content
