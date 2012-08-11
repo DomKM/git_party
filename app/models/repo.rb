@@ -21,8 +21,8 @@ class Repo < ActiveRecord::Base
   def updated?
     url = "https://api.github.com/repos/#{owner}/#{name}"
     response = RestClient.get(url)
-    json_response = JSON.parse(response, :symbolize_names => true)
-    json_respone[:updated_at] == updated_at
+    json = JSON.parse(response, :symbolize_names => true)
+    json[:updated_at] - updated_at < 0
   end
 
   private
