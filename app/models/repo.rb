@@ -1,5 +1,6 @@
 class Repo < ActiveRecord::Base
   attr_accessible :owner, :name
+  # add: language, homepage, github_created_at (created_at), github_updated_at (updated_at), description, stars (watchers), forks, issues (open_issues)
   validates_presence_of :name, :owner
   has_many :todo_files, dependent: :destroy
   has_many :todo_lines, through: :todo_files
@@ -63,7 +64,7 @@ class Repo < ActiveRecord::Base
     line.downcase.include?('todo') || line.downcase.include?('bugbug')
   end
 
-  def parse_repo_name(string)
+  def parse_owner_name(string)
     self.owner = string.split("/")[0]
     self.name = string.split("/")[1]
   end
