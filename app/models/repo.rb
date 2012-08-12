@@ -2,6 +2,7 @@ class Repo < ActiveRecord::Base
   attr_accessible :owner, :name
   validates_presence_of :name, :owner
   has_many :todo_files, dependent: :destroy
+  has_many :todo_lines, through: :todo_files
 
   def github
     @todos = {}
@@ -19,10 +20,23 @@ class Repo < ActiveRecord::Base
   end
 
   def updated?
-    url = "https://api.github.com/repos/#{owner}/#{name}"
-    response = RestClient.get(url)
-    json_response = JSON.parse(response, :symbolize_names => true)
-    json_respone[:updated_at] == updated_at
+    begin
+      url = "https://api.github.com/repos/#{owner}/#{name}"
+      RestClient.get(url, "If-Modified-Since" => "#{updated_at.httpdate}")
+    rescue RestClient::NotModified
+      false
+    end
+  end
+
+  def update!
+    TodoFile.destroy_all(repo_id: id)
+    github.each_value do |todo|
+      t = todo_files.create(todo.reject { |k, v| k == :lines })
+      todo[:lines].each do |line|
+        t.todo_lines.create( line_num: line )
+      end
+    end
+    touch
   end
 
   private
