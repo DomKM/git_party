@@ -37,21 +37,9 @@ class Repo < ActiveRecord::Base
         t.todo_lines.create( line_num: line )
       end
     end
+    touch
   end
 
-  def update_info!
-    self.github_created_at = info[:created_at]
-    self.github_updated_at = info[:updated_at]
-    self.homepage = info[:homepage]
-    self.description = info[:description]
-    self.language = info[:language]
-    self.forks = info[:forks]
-    self.stars = info[:watchers]
-    self.issues = info[:open_issues]
-    self.save
-  end
-
-private
 
   def find_content
     files.each do |sha, value|
@@ -88,8 +76,9 @@ private
   def info
     return @info if @info
     url = "https://api.github.com/repos/#{owner}/#{name}"
-    response = RestClient.get(url)
-    @info = JSON.parse(response, :symbolize_names => true)
+    response = RestClient.get(url, :params => {:recursive => true})
+    json_response = JSON.parse(response, :symbolize_names => true)
+    @tree = json_response[:tree]
   end
 
   def tree
