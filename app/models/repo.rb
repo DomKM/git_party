@@ -1,6 +1,5 @@
 class Repo < ActiveRecord::Base
   attr_accessible :owner, :name
-  # add: language, homepage, github_created_at (created_at), github_updated_at (updated_at), description, stars (watchers), forks, issues (open_issues)
   validates_presence_of :name, :owner
   has_many :todo_files, dependent: :destroy
   has_many :todo_lines, through: :todo_files
@@ -37,7 +36,10 @@ class Repo < ActiveRecord::Base
         t.todo_lines.create( line_num: line )
       end
     end
+    update_info!
   end
+
+  private
 
   def update_info!
     self.github_created_at = info[:created_at]
@@ -50,8 +52,6 @@ class Repo < ActiveRecord::Base
     self.issues = info[:open_issues]
     self.save
   end
-
-private
 
   def find_content
     files.each do |sha, value|
