@@ -1,6 +1,4 @@
-= form_for @repo do |f|
-  = f.label :owner
-  = f.text_field :owner
-  = f.label :name
-  = f.text_field :name
-  = f.submit
+= form_for( @repo, :class => "form-inline" ) do |f|
+  = f.text_field :owner, :placeholder => "Owner"
+  = f.text_field :name, :placeholder => "Name"
+  = f.submit "Party!", :class => "btn"
