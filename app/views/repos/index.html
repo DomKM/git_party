@@ -6,16 +6,12 @@
   <body>
     <div id="git_party"></div>
     <script>
-
       jQuery(function($, undefined) {
         $('#git_party').terminal(function(command, term) {
-          var commandArray = (command.split(" "));
-          var owner = commandArray[1].split("/")[0];
-          var repo = commandArray[1].split("/")[1];
-          var sendToserver = function(commandArray){
+          var sendToserver = function(path){
             $.ajax({
               dataType: "json",
-              url: "/commandArray[1]",
+              url: "/".concat(path),
               data: {
                 name: owner,
                 repo: repo
@@ -24,11 +20,14 @@
                 console.log(result);
               }
             });
-          };
+          }
           if (command !== '') {
             try {
                 if (commandArray[0] == "get") {
-                    sendToserver(commandArray);
+                  var commandArray = (command.split(" "));
+                  var owner = (commandArray[1].split("/")[0]);
+                  var repo = (commandArray[1].split("/")[1]);
+                    sendToserver(commandArray[1]);
                 }
             } catch(e) {
                 term.error(new String(e));
@@ -39,7 +38,7 @@
         }, {
           greetings: 'Created by Junejung, MattNguyen, DomKM, Asada',
           name: 'git_party',
-          height: 300,
+          height: 200,
           prompt: '>>'
         });
       });
