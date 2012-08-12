@@ -8,26 +8,23 @@
     <script>
       jQuery(function($, undefined) {
         $('#git_party').terminal(function(command, term) {
-          var sendToserver = function(path){
+
+          var sendToServer = function(path) {
             $.ajax({
               dataType: "json",
               url: "/".concat(path),
-              data: {
-                name: owner,
-                repo: repo
-              },
-              success: function(result){
-                console.log(result);
+              success: function(data) {
+                alert("success"); 
               }
             });
           }
           if (command !== '') {
             try {
+                var commandArray = (command.split(" "));
+                var owner = (commandArray[1].split("/")[0]);
+                var repo = (commandArray[1].split("/")[1]);
                 if (commandArray[0] == "get") {
-                  var commandArray = (command.split(" "));
-                  var owner = (commandArray[1].split("/")[0]);
-                  var repo = (commandArray[1].split("/")[1]);
-                    sendToserver(commandArray[1]);
+                  sendToServer(commandArray[1]);
                 }
             } catch(e) {
                 term.error(new String(e));
@@ -36,7 +33,7 @@
             term.echo('');
           }
         }, {
-          greetings: 'Created by Junejung, MattNguyen, DomKM, Asada',
+          greetings: 'Created by Junejung, MattNguyen, DomKM, Asada\n-Help----------------------------------------\n|      get owner of repos name/repo name    |\n---------------------------------------------',
           name: 'git_party',
           height: 200,
           prompt: '>>'
