@@ -1,44 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheets" type="text/css" href="jquery.terminal.css" />
   </head>
   <body>
-    <div id="git_party"></div>
-    <script>
-      jQuery(function($, undefined) {
-        $('#git_party').terminal(function(command, term) {
-
-          var sendToServer = function(path) {
-            $.ajax({
-              dataType: "json",
-              url: "/".concat(path),
-              success: function(data) {
-                alert("success"); 
-              }
-            });
-          }
-          if (command !== '') {
-            try {
-                var commandArray = (command.split(" "));
-                var owner = (commandArray[1].split("/")[0]);
-                var repo = (commandArray[1].split("/")[1]);
-                if (commandArray[0] == "get") {
-                  sendToServer(commandArray[1]);
-                }
-            } catch(e) {
-                term.error(new String(e));
-            }
-          } else {
-            term.echo('');
-          }
-        }, {
-          greetings: 'Created by Junejung, MattNguyen, DomKM, Asada\n-Help----------------------------------------\n|      get owner of repos name/repo name    |\n---------------------------------------------',
-          name: 'git_party',
-          height: 200,
-          prompt: '>>'
-        });
-      });
-    </script>
+    is it there?
   </body>
 </html>

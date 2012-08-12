@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120810051736) do
+ActiveRecord::Schema.define(:version => 20120810232426) do
 
   create_table "repos", :force => true do |t|
     t.string   "name"
@@ -19,6 +19,9 @@ ActiveRecord::Schema.define(:version => 20120810051736) do
     t.datetime "updated_at", :null => false
     t.string   "owner"
   end
+
+  add_index "repos", ["name"], :name => "index_repos_on_name"
+  add_index "repos", ["owner"], :name => "index_repos_on_owner"
 
   create_table "todo_files", :force => true do |t|
     t.integer  "repo_id"
@@ -37,5 +40,7 @@ ActiveRecord::Schema.define(:version => 20120810051736) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "todo_lines", ["todo_file_id"], :name => "index_todo_lines_on_todo_file_id"
 
 end
