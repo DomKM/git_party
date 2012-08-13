@@ -106,7 +106,6 @@ class Repo < ActiveRecord::Base
     url = "https://api.github.com/repos/#{owner}/#{name}/git/trees/master"
     response = RestClient.get(url, :params => {:recursive => true})
     json_response = JSON.parse(response, :symbolize_names => true)
-    binding.pry
     @tree = json_response[:tree]
   end
 
@@ -122,6 +121,12 @@ class Repo < ActiveRecord::Base
   def json(string)
     JSON.parse(string, :symbolize_names => true)
   end
+
+  def api_get(path, opts = {})
+    url = "https://api.github.com/" + path
+    RestClient.get(url, opts)
+  end
+
 
 
 end
