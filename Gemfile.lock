@@ -152,6 +152,8 @@ GEM
       slop (~> 3.0)
     pry-stack_explorer (0.4.5)
       binding_of_caller (~> 0.6.2)
+    quiet_assets (1.0.1)
+      railties (~> 3.1)
     rack (1.4.1)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -253,7 +255,11 @@ DEPENDENCIES
   jquery-rails
   json
   pg (>= 0.14.0)
+<<<<<<< HEAD
   pjax_rails
+=======
+  quiet_assets
+>>>>>>> Add quiet_assets
   rails (= 3.2.7)
   rest-client
   rspec-rails (>= 2.11.0)
