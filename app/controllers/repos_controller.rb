@@ -1,5 +1,5 @@
 class ReposController < ApplicationController
-  respond_to :html, :json, :js
+  # respond_to :html, :json, :js
 
   def index
     @repos = Repo.all
@@ -7,7 +7,7 @@ class ReposController < ApplicationController
 
   def show
     @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
-    respond_with @repo
+    # respond_with @repo
   end
 
   def create
