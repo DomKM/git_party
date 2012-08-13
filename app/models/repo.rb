@@ -119,5 +119,9 @@ class Repo < ActiveRecord::Base
     @all_files
   end
 
+  def json(string)
+    JSON.parse(string, :symbolize_names => true)
+  end
+
 
 end
