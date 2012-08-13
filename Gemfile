@@ -17,7 +17,6 @@ group :development, :test do
     gem "factory_girl_rails", ">= 3.5.0"
     gem "ffaker"
     gem "shoulda-matchers"
-    gem "jazz_hands"
     gem 'guard'
     gem 'growl'
     gem 'guard-rspec'
