@@ -2,4 +2,5 @@
   %a{ :href => "/#{repo.owner}/#{repo.name}" }
     %td= link_to repo.name, "/#{repo.owner}/#{repo.name}"
     %td= repo.owner
+    %td= repo.language
     %td= repo.todo_lines.count
