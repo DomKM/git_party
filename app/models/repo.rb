@@ -5,8 +5,6 @@ class Repo < ActiveRecord::Base
   has_many :todo_lines, through: :todo_files
 
   def github
-    @todos = {}
-    @all_files = {}
     find_content
     find_todos
   end
@@ -39,7 +37,17 @@ class Repo < ActiveRecord::Base
     update_info!
   end
 
-  private
+  def updatable?
+    tree.length + 100 < rate_remaining # '+100' is to be safe
+  end
+
+
+
+  def rate_remaining
+    response = RestClient.get("https://api.github.com/rate_limit")
+    json_response = JSON.parse(response, :symbolize_names => true)
+    json_response[:remaining]
+  end
 
   def update_info!
     self.github_created_at = info[:created_at]
@@ -60,6 +68,7 @@ class Repo < ActiveRecord::Base
   end
 
   def find_todos
+    @todos = {}
     files.each do |key, value|
       value[:content  ].split(%r{\n}).each_with_index do |line, index|
         if include_todo?(line)
@@ -97,14 +106,18 @@ class Repo < ActiveRecord::Base
     url = "https://api.github.com/repos/#{owner}/#{name}/git/trees/master"
     response = RestClient.get(url, :params => {:recursive => true})
     json_response = JSON.parse(response, :symbolize_names => true)
+    binding.pry
     @tree = json_response[:tree]
   end
 
   def files
-    return @all_files unless @all_files.empty?
+    return @all_files if @all_files
+    @all_files = {}
     tree.each do |obj|
       @all_files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [] } if obj[:type] == "blob"
     end
     @all_files
   end
+
+
 end
