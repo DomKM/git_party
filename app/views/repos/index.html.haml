@@ -6,9 +6,18 @@
 
 #section.all_repos
   - if @repos.length == 0
-    %p.no_results Hmm...looks like we don't have that repo. Maybe you'd like to #{ link_to "add one", new_repo_path }.
+    %p.no_results Hmm...looks like we don't have that repo. Maybe you'd like to #{ link_to "add one", "#new_repo", "data-toggle" => "modal" }.
+    .modal.hide.fade#new_repo
+      .modal-header
+        %button{"type" => "button", :class => "close", "data-dismiss" => "modal"} x
+        %h3 Add a new repo!
+      .modal-body
+        = form_for( @repo ) do |f|
+          = f.text_field :owner, :placeholder => "Owner"
+          = f.text_field :name, :placeholder => "Name"
+          = f.submit "Party!", :class => "btn"
   - else
-    %table.table.table-striped
+    %table.table
       %tr
         %th= link_to "Name", :sort => "name"
         %th= link_to "Owner", :sort => "owner"
