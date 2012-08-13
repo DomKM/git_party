@@ -11,7 +11,7 @@ class Repo < ActiveRecord::Base
 
   def real?
     begin
-      RestClient.get("https://api.github.com/repos/#{owner}/#{name}")
+      http_get("repos/#{owner}/#{name}")
     rescue RestClient::ResourceNotFound
       false
     end
@@ -19,8 +19,7 @@ class Repo < ActiveRecord::Base
 
   def updated?
     begin
-      url = "https://api.github.com/repos/#{owner}/#{name}"
-      RestClient.get(url, "If-Modified-Since" => "#{updated_at.httpdate}")
+      http_get("repos/#{owner}/#{name}", "If-Modified-Since" => "#{updated_at.httpdate}")
     rescue RestClient::NotModified
       false
     end
@@ -41,12 +40,9 @@ class Repo < ActiveRecord::Base
     tree.length + 100 < rate_remaining # '+100' is to be safe
   end
 
-
-
   def rate_remaining
-    response = RestClient.get("https://api.github.com/rate_limit")
-    json_response = JSON.parse(response, :symbolize_names => true)
-    json_response[:remaining]
+    response = json_get("rate_limit")
+    response[:rate][:remaining]
   end
 
   def update_info!
@@ -63,7 +59,7 @@ class Repo < ActiveRecord::Base
 
   def find_content
     files.each do |sha, value|
-      files[sha] = value.merge!( { content: git_connection_for_content(sha) } )
+      files[sha] = value.merge!( { content: get_content(sha) } )
     end
   end
 
@@ -84,51 +80,43 @@ class Repo < ActiveRecord::Base
     line.downcase.include?('todo') || line.downcase.include?('bugbug')
   end
 
-  def parse_owner_name(string)
-    self.owner = string.split("/")[0]
-    self.name = string.split("/")[1]
-  end
-
-  def git_connection_for_content(sha)
-    url = "https://api.github.com/repos/#{owner}/#{name}/git/blobs/#{sha}"
-    RestClient.get(url, :accept => "application/vnd.github-blob.raw")
+  def get_content(sha)
+    http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
   end
 
   def info
     return @info if @info
-    url = "https://api.github.com/repos/#{owner}/#{name}"
-    response = RestClient.get(url)
-    @info = JSON.parse(response, :symbolize_names => true)
+    @info = json_get("repos/#{owner}/#{name}")
   end
 
   def tree
     return @tree if @tree
-    url = "https://api.github.com/repos/#{owner}/#{name}/git/trees/master"
-    response = RestClient.get(url, :params => {:recursive => true})
-    json_response = JSON.parse(response, :symbolize_names => true)
-    @tree = json_response[:tree]
+    path = "repos/#{owner}/#{name}/git/trees/master"
+    response = json_get(path, :params => {:recursive => true} )
+    @tree = response[:tree]
   end
 
   def files
-    return @all_files if @all_files
-    @all_files = {}
+    return @files if @files
+    @files = {}
     tree.each do |obj|
-      @all_files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [] } if obj[:type] == "blob"
+      @files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [] } if obj[:type] == "blob"
     end
-    @all_files
+    @files
   end
 
   def json(string)
     JSON.parse(string, :symbolize_names => true)
   end
 
-  def api_get(path, opts = {})
+  def http_get(path, opts = {})
     url = "https://api.github.com/" + path
     RestClient.get(url, opts)
   end
 
   def json_get(path, opts = {})
-    json( api_get(path, opts) )
+    response = http_get(path, opts)
+    json(response)
   end
 
 end
