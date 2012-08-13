@@ -11,13 +11,21 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120810232426) do
+ActiveRecord::Schema.define(:version => 20120812205953) do
 
   create_table "repos", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
     t.string   "owner"
+    t.datetime "github_created_at"
+    t.datetime "github_updated_at"
+    t.string   "description"
+    t.string   "homepage"
+    t.string   "language"
+    t.integer  "forks"
+    t.integer  "stars"
+    t.integer  "issues"
   end
 
   add_index "repos", ["name"], :name => "index_repos_on_name"
