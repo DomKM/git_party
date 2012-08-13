@@ -1,5 +1,5 @@
 class ReposController < ApplicationController
-  respond_to :html, :xml, :json
+  respond_to :html, :json, :js
 
   def index
     @repos = Repo.all
