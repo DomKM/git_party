@@ -1,0 +1,17 @@
+<script>
+  $('#terminal').terminal(function(command, term) {
+    var userInput = (command.split(" "));
+    if (userInput[0] == 'goto') {
+      term.echo("going to ".concat(userInput[1]));
+      $.pjax({
+        url: "/".concat(userInput[1]),
+        container: '.data-pjax-container'
+      })
+    } else {
+      term.echo('unknown command');
+    }
+  }, { 
+    greetings: "Welcome to Git Party",
+    prompt: '>' 
+  });
+</script>

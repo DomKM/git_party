@@ -1,11 +1,10 @@
-%h1 Repos#index
-= render "new"
-- @repos.each do |repo|
-  %ul
-    %li= "#{repo.owner}/#{repo.name}"
-    %ol
-    - repo.todo_files.each do |file|
-      %li= "#{file.sha} #{file.path}"
-      - file.todo_lines.each do |line|
-        = "#{line.line_num}"
-    %br
+.data-pjax-container
+  - @repos.each do |repo|
+    %ul
+      %li= "#{repo.owner}/#{repo.name}"
+      %ol
+      - repo.todo_files.each do |file|
+        %li= "#{file.sha} #{file.path}"
+        - file.todo_lines.each do |line|
+          = "#{line.line_num}"
+      %br
