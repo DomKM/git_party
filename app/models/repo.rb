@@ -127,6 +127,8 @@ class Repo < ActiveRecord::Base
     RestClient.get(url, opts)
   end
 
-
+  def json_get(path, opts = {})
+    json( api_get(path, opts) )
+  end
 
 end
