@@ -1,9 +1,16 @@
-#section.all_repos
-  %table.table.table-striped
-    %tr
-      %th= link_to "Name", :sort => "name"
-      %th= link_to "Owner", :sort => "owner"
-      %th= link_to "Num. of Todos", :sort => "todos_count"
-    = render @repos
+.search_form
+  = form_tag repos_path, :class => "form-search", :method => "get" do
+    %p
+      = text_field_tag :search, params[:search], :class => "search_input", :placeholder => "E.g. 'rails/rails', 'twitter/bootstrap'"
+      = submit_tag "Search", :name => nil, :class => "btn btn-primary btn-large"
 
-  = render 'new'
+#section.all_repos
+  - if @repos.length == 0
+    %p.no_results Hmm...looks like we don't have that repo. Maybe you'd like to #{ link_to "add one", new_repo_path }.
+  - else
+    %table.table.table-striped
+      %tr
+        %th= link_to "Name", :sort => "name"
+        %th= link_to "Owner", :sort => "owner"
+        %th= link_to "Num. of Todos", :sort => "todos_count"
+      = render @repos

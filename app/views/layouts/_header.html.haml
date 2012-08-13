@@ -2,7 +2,9 @@
   %header
     %section.logo
       .span3
-        = link_to "Git Party", root_path, :class => "title"
+        %a{:href => "#{root_path}"}
+          .title_git git
+          .title_party party
 
     %section.info
       .offset3.span9
@@ -12,8 +14,3 @@
           %h2 See the todos.
         %span
           %h2 Get involved.
-        .search_form
-          = form_tag repos_path, :method => "get" do
-            %p
-              = text_field_tag :search, params[:search]
-              = submit_tag "Search", :name => nil, :class => "btn"

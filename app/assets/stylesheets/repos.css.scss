@@ -6,12 +6,11 @@ body {
 }
 
 header {
-  padding-top: 60px;
-  margin-bottom: 40px;
+  padding-top: 20px;
+  margin-bottom: 20px;
   width: 100%;
   display: inline-block;
   position: fixed-top;
-  border-bottom: 1px solid #ddd;
   section.logo {
     display: inline;
   }
@@ -19,6 +18,7 @@ header {
     margin-top: -40px;
     display: inline;
     h2 {
+      font-size: 28px;
       color: #17EFFF;
       display: inline;
     }
@@ -26,29 +26,47 @@ header {
       color: #FF6BD8;
     }
     .offset3.span9 {
-      margin-top: -50px;
+      margin-top: -110px;
     }
   }
 }
 
-input, textarea, select, .uneditable-input {
-  border: 1px solid #bbb;
-  padding: 10px;
-  height: auto;
-  margin-bottom: 15px;
+input.search_input {
+  width: 60%;
+  font-size: 24px;
+  height: 35px;
+  padding: 5px;
+  text-align: center;
 }
 
-.title {
-  opacity: .9;
+.title_git {
   font-size: 36px;
-  background-color: #444;
+  background-color: #17EFFF;
   color: #fff;
   @include border-top-right-radius(40px);
   @include border-bottom-left-radius(40px);
   text-decoration: none;
   padding: 35px;
   font-weight: bold;
-  @include box-shadow(#666 2px 2px 10px)
+  @include box-shadow(#666 2px 2px 10px);
+  margin-right: 90px;
+}
+
+section.logo a {
+  text-decoration: none;
+  .title_party {
+  font-size: 36px;
+  background-color: #FF6BD8;
+  color: #fff;
+  @include border-top-left-radius(40px);
+  @include border-bottom-right-radius(40px);
+  text-decoration: none;
+  padding: 35px;
+  font-weight: bold;
+  @include box-shadow(#666 2px 2px 10px);
+  margin-top: -45px;
+  margin-left: 90px;
+  }
 }
 
 .title:hover {
@@ -72,9 +90,10 @@ input, textarea, select, .uneditable-input {
   float: right;
   margin-top: -10px;
 }
+
 .search_form {
   text-align: center;
-  margin: 20px 10px;
+  margin-bottom: 50px;
 }
 
 .create_form {
@@ -82,6 +101,8 @@ input, textarea, select, .uneditable-input {
   margin: 20px 10px;
 }
 
-.btn {
-  margin-bottom: 8px;
+.no_results {
+  font-size: 30px;
+  text-align: center;
+  color: #555;
 }
