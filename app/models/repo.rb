@@ -39,6 +39,14 @@ class Repo < ActiveRecord::Base
     touch
   end
 
+  def self.search(search)
+    if search
+      where('name LIKE ?', "%#{search}%")
+    else
+      scoped
+    end
+  end
+
   private
 
   def find_content

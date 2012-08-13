@@ -11,6 +11,7 @@ group :assets do
 end
 
 group :development, :test do
+    gem 'quiet_assets'
     gem "thin", ">= 1.4.1"
     gem "haml-rails", ">= 0.3.4"
     gem "rspec-rails", ">= 2.11.0"

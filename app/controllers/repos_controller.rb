@@ -2,7 +2,7 @@ class ReposController < ApplicationController
 
   def index
     @repo = Repo.new
-    @repos = Repo.all
+    @repos = Repo.search(params[:search]).order(sort_column + " " + sort_direction)
   end
 
   def show
@@ -29,6 +29,16 @@ class ReposController < ApplicationController
 
   def update
 
+  end
+
+  private
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "asc"
+  end
+
+  def sort_column
+    Repo.column_names.include?(params[:sort]) ? params[:sort] : "name"
   end
 
 end

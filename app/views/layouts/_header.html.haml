@@ -1,0 +1,19 @@
+.container
+  %header
+    %section.logo
+      .span3
+        = link_to "Git Party", root_path, :class => "title"
+
+    %section.info
+      .offset3.span9
+        %span
+          %h2 Find a project.
+        %span.middle_text
+          %h2 See the todos.
+        %span
+          %h2 Get involved.
+        .search_form
+          = form_tag repos_path, :method => "get" do
+            %p
+              = text_field_tag :search, params[:search]
+              = submit_tag "Search", :name => nil, :class => "btn"

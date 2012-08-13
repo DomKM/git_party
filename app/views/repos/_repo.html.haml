@@ -1,6 +1,4 @@
-.single_repo
-  %li
-    = link_to "#{ repo.owner }/#{ repo.name }", "/#{ repo.owner }/#{ repo.name }", :class => "repo_url"
-    .repo_count
-      %p To Dos:
-      = repo.todo_lines.count
+%tr
+  %td= repo.name
+  %td= repo.owner
+  %td= repo.todo_lines.count
