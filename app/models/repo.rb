@@ -66,34 +66,25 @@ class Repo < ActiveRecord::Base
     @tree = response[:tree]
   end
 
+
+  # Currently running into problems when analyzing files with no filetype extensions.
   def todos # Formerly 'files'
     return @todos if @todos
     @todos = {}
     tree.find_all { |f| f[:type] == "blob" }.each do |file|
-      filetype = parse_file_ext(file[:path])
-      unless content(file[:sha]).any_todos?(filetype).nil?      # Checks to see if there are any todos in the content before creating hash
-        @todos[file[:sha]] = { path: file[:path], sha: file[:sha], lines: lines(filetype), content: @content }
+      if extension?(file[:path]) # Makes sure that there is a file extension
+        filetype = parse_file_ext(file[:path])
+        if content(file[:sha]) =~ /todo|to do|bugbug|bug/i
+          @todos[file[:sha]] = { path: file[:path], sha: file[:sha], lines: lines(filetype), content: @content }
+        end
       end
     end
     @todos
   end
 
   def content(sha)
-    return @content if @content
     @content = http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
   end
-
-=begin
-I dont think we need this. @todos is the same as @files
-
-  def todos
-    return @todos if @todos
-    @todos = {}
-    files.each { |key, value| @todos[key] = value }
-    @todos
-  end
-
-=end
 
   def lines(filetype)
 =begin
@@ -111,9 +102,11 @@ I dont think we need this. @todos is the same as @files
     @content.split(%r{\n}).each_with_index do |line, index|
       case filetype
       when "rb"
-        line_arr << index + 1 unless line.any_todos?("#").nil?
+        if any_todos?(line, "#")
+          line_arr << index + 1
+        end
       when "py"
-        line_arr << index + 1 unless line.any_todos?("//").nil?
+        line_arr << index + 1 unless line.any_todos?("//").empty?
       else
         []
       end
@@ -121,17 +114,17 @@ I dont think we need this. @todos is the same as @files
     line_arr
   end
 
-  def any_todos?(comment) # This will only work for // and # style comments
-    regex = /^[\t ]*[^\s#{ext}][^#{ext}\n\r]*#{ext}([^#{ext}\n\r]*[todo|to do|bugbug|bug]*.*)/i
-    self.scan(regex).flatten
+  def any_todos?(text, comment) # This will only work for // and # style comments.
+    regex = /^[\t ]*[^\s#{comment}][^#{comment}\n\r]*#{comment}([^#{comment}\n\r]*[todo|to do|bugbug|bug]*.*)/i
+    !text.scan(regex).flatten.empty?
   end
 
   def parse_file_ext(value)
-    begin
-      value.match(/\.\w+/i)[0][1..-1]  # Returns first instance of everything after the first dot
-    rescue NoMethodError
-      nil
-    end
+    value.match(/\.\w+/i)[0][1..-1]  # Returns first instance of everything after the first dot
+  end
+
+  def extension?(value)
+    !value.match(/\.\w+/i).nil?
   end
 
   def json(string)
