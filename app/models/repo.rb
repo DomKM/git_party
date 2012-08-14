@@ -26,7 +26,7 @@ class Repo < ActiveRecord::Base
 
   def update!
     TodoFile.destroy_all(repo_id: id)
-    github.each_value do |todo|
+    todos.each_value do |todo|
       t = todo_files.create(todo.reject { |k, v| k == :lines })
       todo[:lines].each do |line|
         t.todo_lines.create( line_num: line )
@@ -54,10 +54,6 @@ class Repo < ActiveRecord::Base
     self.save
   end
 
-  def include_todo?(line)
-    line.downcase.include?('todo') || line.downcase.include?('bugbug')
-  end
-
   def info
     return @info if @info
     @info = json_get("repos/#{owner}/#{name}")
@@ -73,13 +69,28 @@ class Repo < ActiveRecord::Base
   def files
     return @files if @files
     @files = {}
-    tree.find_all {|f| f[:type] == "blob"}.each do |obj|
-      @files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [], content: get_content(obj[:sha]) }
+    tree.find_all { |f| f[:type] == "blob" }.each do |obj|
+      if content(obj[:sha]).any_todos? # Checks to see if there are any todos in the content before creating hash
+        @files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [], content: @content }
+      end
     end
     @files
   end
 
-  def find_todos
+  def any_todos?
+    self =~ /TODO|BUGBUG/
+  end
+
+  def include_todo?(line)
+    line.downcase.include?('todo') || line.downcase.include?('bugbug')
+  end
+
+  def content(sha)
+    return @content if @content
+    @content = json_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
+  end
+
+  def todos
 =begin
   1. Figure out the language based on the file path
   2. Figure out the commenting syntax for that language
@@ -91,22 +102,14 @@ class Repo < ActiveRecord::Base
     b. if multiline
       -search for todos and bubugs until ending comment syntax (eg- for ruby, its '=end')
 =end
-  def get_content(sha)
-    http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
-  end
-
-  def todos
     return @todos if @todos
     @todos = {}
     files.each do |key, value|
       case parse_file_ext(value[:path]) # Matching the file extension with the appropriate search method
-        when "js"
-          find_all_todos("js")
-        when "rb" || "py"
-        when "html"
-        when "css"
+        when "js" then find_all_todos("//")
       end
-      
+    end
+=begin
       value[:content].split(%r{\n}).each_with_index do |line, index|
         if include_todo?(line)
           value[:lines] << index + 1
@@ -115,14 +118,16 @@ class Repo < ActiveRecord::Base
       end
     end
     @todos
+=end
+  end
+
+  def find_all_todos(comment)
   end
 
   def parse_file_ext(value)
     value.match(/\.\w+/i)[0][1..-1] # Returns first instance of everything after the first dot
   end
 
-  def include_todo?(line)
-    line.downcase.include?('todo') || line.downcase.include?('bugbug')
   def json(string)
     JSON.parse(string, :symbolize_names => true)
   end

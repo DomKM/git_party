@@ -101,8 +101,6 @@ GEM
     pjax_rails (0.3.2)
       jquery-rails
     polyglot (0.3.3)
-    quiet_assets (1.0.1)
-      railties (~> 3.1)
     posix-spawn (0.3.6)
     pry (0.9.10)
       coderay (~> 1.0.5)
@@ -123,6 +121,8 @@ GEM
       slop (~> 3.0)
     pry-stack_explorer (0.4.5)
       binding_of_caller (~> 0.6.2)
+    quiet_assets (1.0.1)
+      railties (~> 3.1)
     quiet_assets (1.0.1)
       railties (~> 3.1)
     rack (1.4.1)
@@ -223,7 +223,6 @@ DEPENDENCIES
   jquery-rails
   json
   pg (>= 0.14.0)
-<<<<<<< HEAD
   pjax_rails
   quiet_assets
   rails (= 3.2.7)
