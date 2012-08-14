@@ -60,8 +60,27 @@ class Repo < ActiveRecord::Base
   end
 
   def find_todos
+=begin
+  1. Figure out the language based on the file path
+  2. Figure out the commenting syntax for that language
+    a. single line
+    b. multi line
+  3. Parse through the content to look for comments, depending on the language
+    a. if single line
+      -search for TODOS and BUGBUGs until the end of the line
+    b. if multiline
+      -search for todos and bubugs until ending comment syntax (eg- for ruby, its '=end')
+=end
     files.each do |key, value|
-      value[:content  ].split(%r{\n}).each_with_index do |line, index|
+      case parse_file_ext(value[:path]) # Matching the file extension with the appropriate search method
+        when "js"
+          find_all_todos("js")
+        when "rb" || "py"
+        when "html"
+        when "css"
+      end
+      
+      value[:content].split(%r{\n}).each_with_index do |line, index|
         if include_todo?(line)
           value[:lines] << index + 1
           @todos[key] = value
@@ -69,6 +88,10 @@ class Repo < ActiveRecord::Base
       end
     end
     @todos
+  end
+
+  def parse_file_ext(value)
+    value.match(/\.\w+/i)[0][1..-1] # Returns first instance of everything after the first dot
   end
 
   def include_todo?(line)
