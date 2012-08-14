@@ -4,11 +4,6 @@ class Repo < ActiveRecord::Base
   has_many :todo_files, dependent: :destroy
   has_many :todo_lines, through: :todo_files
 
-  def github
-    find_content
-    find_todos
-  end
-
   def real?
     begin
       http_get("repos/#{owner}/#{name}")
@@ -25,6 +20,10 @@ class Repo < ActiveRecord::Base
     end
   end
 
+  def updatable?
+    tree.length + 100 < rate_remaining # '+100' is to be safe
+  end
+
   def update!
     TodoFile.destroy_all(repo_id: id)
     github.each_value do |todo|
@@ -36,9 +35,7 @@ class Repo < ActiveRecord::Base
     update_info!
   end
 
-  def updatable?
-    tree.length + 100 < rate_remaining # '+100' is to be safe
-  end
+  private
 
   def rate_remaining
     response = json_get("rate_limit")
@@ -57,31 +54,8 @@ class Repo < ActiveRecord::Base
     self.save
   end
 
-  def find_content
-    files.each do |sha, value|
-      files[sha] = value.merge!( { content: get_content(sha) } )
-    end
-  end
-
-  def find_todos
-    @todos = {}
-    files.each do |key, value|
-      value[:content  ].split(%r{\n}).each_with_index do |line, index|
-        if include_todo?(line)
-          value[:lines] << index + 1
-          @todos[key] = value
-        end
-      end
-    end
-    @todos
-  end
-
   def include_todo?(line)
     line.downcase.include?('todo') || line.downcase.include?('bugbug')
-  end
-
-  def get_content(sha)
-    http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
   end
 
   def info
@@ -99,10 +73,28 @@ class Repo < ActiveRecord::Base
   def files
     return @files if @files
     @files = {}
-    tree.each do |obj|
-      @files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [] } if obj[:type] == "blob"
+    tree.find_all {|f| f[:type] == "blob"}.each do |obj|
+      @files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [], content: get_content(obj[:sha]) }
     end
     @files
+  end
+
+  def get_content(sha)
+    http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
+  end
+
+  def todos
+    return @todos if @todos
+    @todos = {}
+    files.each do |key, value|
+      value[:content  ].split(%r{\n}).each_with_index do |line, index|
+        if include_todo?(line)
+          value[:lines] << index + 1
+          @todos[key] = value
+        end
+      end
+    end
+    @todos
   end
 
   def json(string)
