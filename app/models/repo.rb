@@ -4,16 +4,9 @@ class Repo < ActiveRecord::Base
   has_many :todo_files, dependent: :destroy
   has_many :todo_lines, through: :todo_files
 
-  def github
-    @todos = {}
-    @all_files = {}
-    find_content
-    find_todos
-  end
-
   def real?
     begin
-      RestClient.get("https://api.github.com/repos/#{owner}/#{name}")
+      http_get("repos/#{owner}/#{name}")
     rescue RestClient::ResourceNotFound
       false
     end
@@ -21,11 +14,14 @@ class Repo < ActiveRecord::Base
 
   def updated?
     begin
-      url = "https://api.github.com/repos/#{owner}/#{name}"
-      RestClient.get(url, "If-Modified-Since" => "#{updated_at.httpdate}")
+      http_get("repos/#{owner}/#{name}", "If-Modified-Since" => "#{updated_at.httpdate}")
     rescue RestClient::NotModified
       false
     end
+  end
+
+  def updatable?
+    tree.length + 100 < rate_remaining # '+100' is to be safe
   end
 
   def update!
@@ -41,6 +37,11 @@ class Repo < ActiveRecord::Base
 
   private
 
+  def rate_remaining
+    response = json_get("rate_limit")
+    response[:rate][:remaining]
+  end
+
   def update_info!
     self.github_created_at = info[:created_at]
     self.github_updated_at = info[:updated_at]
@@ -53,10 +54,29 @@ class Repo < ActiveRecord::Base
     self.save
   end
 
-  def find_content
-    files.each do |sha, value|
-      files[sha] = value.merge!( { content: git_connection_for_content(sha) } )
+  def include_todo?(line)
+    line.downcase.include?('todo') || line.downcase.include?('bugbug')
+  end
+
+  def info
+    return @info if @info
+    @info = json_get("repos/#{owner}/#{name}")
+  end
+
+  def tree
+    return @tree if @tree
+    path = "repos/#{owner}/#{name}/git/trees/master"
+    response = json_get(path, :params => {:recursive => true} )
+    @tree = response[:tree]
+  end
+
+  def files
+    return @files if @files
+    @files = {}
+    tree.find_all {|f| f[:type] == "blob"}.each do |obj|
+      @files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [], content: get_content(obj[:sha]) }
     end
+    @files
   end
 
   def find_todos
@@ -71,6 +91,13 @@ class Repo < ActiveRecord::Base
     b. if multiline
       -search for todos and bubugs until ending comment syntax (eg- for ruby, its '=end')
 =end
+  def get_content(sha)
+    http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
+  end
+
+  def todos
+    return @todos if @todos
+    @todos = {}
     files.each do |key, value|
       case parse_file_ext(value[:path]) # Matching the file extension with the appropriate search method
         when "js"
@@ -96,38 +123,18 @@ class Repo < ActiveRecord::Base
 
   def include_todo?(line)
     line.downcase.include?('todo') || line.downcase.include?('bugbug')
+  def json(string)
+    JSON.parse(string, :symbolize_names => true)
   end
 
-  def parse_owner_name(string)
-    self.owner = string.split("/")[0]
-    self.name = string.split("/")[1]
+  def http_get(path, opts = {})
+    url = "https://api.github.com/" + path
+    RestClient.get(url, opts)
   end
 
-  def git_connection_for_content(sha)
-    url = "https://api.github.com/repos/#{owner}/#{name}/git/blobs/#{sha}"
-    RestClient.get(url, :accept => "application/vnd.github-blob.raw")
+  def json_get(path, opts = {})
+    response = http_get(path, opts)
+    json(response)
   end
 
-  def info
-    return @info if @info
-    url = "https://api.github.com/repos/#{owner}/#{name}"
-    response = RestClient.get(url)
-    @info = JSON.parse(response, :symbolize_names => true)
-  end
-
-  def tree
-    return @tree if @tree
-    url = "https://api.github.com/repos/#{owner}/#{name}/git/trees/master"
-    response = RestClient.get(url, :params => {:recursive => true})
-    json_response = JSON.parse(response, :symbolize_names => true)
-    @tree = json_response[:tree]
-  end
-
-  def files
-    return @all_files unless @all_files.empty?
-    tree.each do |obj|
-      @all_files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [] } if obj[:type] == "blob"
-    end
-    @all_files
-  end
 end
