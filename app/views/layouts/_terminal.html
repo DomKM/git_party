@@ -1,17 +1,53 @@
 <script>
   $('#terminal').terminal(function(command, term) {
-    var userInput = (command.split(" "));
-    if (userInput[0] == 'goto') {
-      term.echo("going to ".concat(userInput[1]));
+    var userInput = command.split(" ");
+    var userCommand = userInput[0].toLowerCase();
+    var userArgs = userInput.slice(1);
+    var searchStr = userArgs.join("#");
+    var argsStr = userArgs.join(" ");
+    var showRepo = function() {
+      term.echo("Showing: ".concat(argsStr));
       $.pjax({
-        url: "/".concat(userInput[1]),
+        url: "/".concat(userArgs),
         container: '.data-pjax-container'
       })
+    };
+    var searchRepos = function() {
+      term.echo("Searching for repos: ".concat(argsStr));
+      $.pjax({
+        url: "/",
+        container: '.data-pjax-container',
+        data: { search: searchStr }
+      })
+    };
+    var index = function() {
+      term.echo("Home sweet home");
+      $.pjax({
+        url: "/",
+        container: '.data-pjax-container'
+      })
+    };
+    var help = function() {
+      term.echo("this is the help message")
+    };
+    var about = function() {
+      term.echo("this is the about message")
+    };
+    if (userCommand === 'show') {
+      showRepo()
+    } else if (userCommand === "search") {
+      searchRepos()
+    } else if (userCommand === "home") {
+      index()
+    } else if (userCommand === "help") {
+      help()
+    } else if (userCommand == "about") {
+      about()
     } else {
-      term.echo('unknown command');
+      term.echo("Unknown command. Enter 'help' for information.");
     }
   }, { 
-    greetings: "Welcome to Git Party",
-    prompt: '>' 
+    prompt: '>',
+    greetings: "Welcome to Git Party"
   });
 </script>

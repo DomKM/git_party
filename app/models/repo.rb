@@ -3,6 +3,7 @@ class Repo < ActiveRecord::Base
   validates_presence_of :name, :owner
   has_many :todo_files, dependent: :destroy
   has_many :todo_lines, through: :todo_files
+  # before_create :update!
 
   def real?
     begin
@@ -26,7 +27,7 @@ class Repo < ActiveRecord::Base
 
   def update!
     TodoFile.destroy_all(repo_id: id)
-    github.each_value do |todo|
+    todos.each_value do |todo|
       t = todo_files.create(todo.reject { |k, v| k == :lines })
       todo[:lines].each do |line|
         t.todo_lines.create( line_num: line )
@@ -97,10 +98,6 @@ class Repo < ActiveRecord::Base
     @todos
   end
 
-  def json(string)
-    JSON.parse(string, :symbolize_names => true)
-  end
-
   def http_get(path, opts = {})
     url = "https://api.github.com/" + path
     RestClient.get(url, opts)
@@ -108,7 +105,7 @@ class Repo < ActiveRecord::Base
 
   def json_get(path, opts = {})
     response = http_get(path, opts)
-    json(response)
+    JSON.parse(response, :symbolize_names => true)
   end
 
 end
