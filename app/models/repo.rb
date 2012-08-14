@@ -66,31 +66,36 @@ class Repo < ActiveRecord::Base
     @tree = response[:tree]
   end
 
-  def files
-    return @files if @files
-    @files = {}
-    tree.find_all { |f| f[:type] == "blob" }.each do |obj|
-      if content(obj[:sha]).any_todos? # Checks to see if there are any todos in the content before creating hash
-        @files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [], content: @content }
+  def todos # Formerly 'files'
+    return @todos if @todos
+    @todos = {}
+    tree.find_all { |f| f[:type] == "blob" }.each do |file|
+      filetype = parse_file_ext(file[:path])
+      unless content(file[:sha]).any_todos?(filetype).nil?      # Checks to see if there are any todos in the content before creating hash
+        @todos[file[:sha]] = { path: file[:path], sha: file[:sha], lines: lines(filetype), content: @content }
       end
     end
-    @files
-  end
-
-  def any_todos?
-    self =~ /TODO|BUGBUG/
-  end
-
-  def include_todo?(line)
-    line.downcase.include?('todo') || line.downcase.include?('bugbug')
+    @todos
   end
 
   def content(sha)
     return @content if @content
-    @content = json_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
+    @content = http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
   end
 
+=begin
+I dont think we need this. @todos is the same as @files
+
   def todos
+    return @todos if @todos
+    @todos = {}
+    files.each { |key, value| @todos[key] = value }
+    @todos
+  end
+
+=end
+
+  def lines(filetype)
 =begin
   1. Figure out the language based on the file path
   2. Figure out the commenting syntax for that language
@@ -102,30 +107,31 @@ class Repo < ActiveRecord::Base
     b. if multiline
       -search for todos and bubugs until ending comment syntax (eg- for ruby, its '=end')
 =end
-    return @todos if @todos
-    @todos = {}
-    files.each do |key, value|
-      case parse_file_ext(value[:path]) # Matching the file extension with the appropriate search method
-        when "js" then find_all_todos("//")
+    line_arr = []
+    @content.split(%r{\n}).each_with_index do |line, index|
+      case filetype
+      when "rb"
+        line_arr << index + 1 unless line.any_todos?("#").nil?
+      when "py"
+        line_arr << index + 1 unless line.any_todos?("//").nil?
+      else
+        []
       end
     end
-=begin
-      value[:content].split(%r{\n}).each_with_index do |line, index|
-        if include_todo?(line)
-          value[:lines] << index + 1
-          @todos[key] = value
-        end
-      end
-    end
-    @todos
-=end
+    line_arr
   end
 
-  def find_all_todos(comment)
+  def any_todos?(comment) # This will only work for // and # style comments
+    regex = /^[\t ]*[^\s#{ext}][^#{ext}\n\r]*#{ext}([^#{ext}\n\r]*[todo|to do|bugbug|bug]*.*)/i
+    self.scan(regex).flatten
   end
 
   def parse_file_ext(value)
-    value.match(/\.\w+/i)[0][1..-1] # Returns first instance of everything after the first dot
+    begin
+      value.match(/\.\w+/i)[0][1..-1]  # Returns first instance of everything after the first dot
+    rescue NoMethodError
+      nil
+    end
   end
 
   def json(string)
@@ -141,5 +147,4 @@ class Repo < ActiveRecord::Base
     response = http_get(path, opts)
     json(response)
   end
-
 end
