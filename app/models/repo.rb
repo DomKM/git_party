@@ -93,7 +93,7 @@ class Repo < ActiveRecord::Base
     line_arr
   end
 
-  def comment_syntax(filetype)
+  def comment_syntax(filetype) # This should probably go in another file?
     case filetype
     when "rb" || "py" || "pl" || "pm" ||"php"
       "#"
