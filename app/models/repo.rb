@@ -66,15 +66,13 @@ class Repo < ActiveRecord::Base
     @tree = response[:tree]
   end
 
-
-  # Currently running into problems when analyzing files with no filetype extensions.
   def todos # Formerly 'files'
     return @todos if @todos
     @todos = {}
     tree.find_all { |f| f[:type] == "blob" }.each do |file|
       if extension?(file[:path]) # Makes sure that there is a file extension
         filetype = parse_file_ext(file[:path])
-        if content(file[:sha]) =~ /todo|to do|bugbug|bug/i
+        if any_todos?( content(file[:sha]), comment_syntax(filetype) )
           @todos[file[:sha]] = { path: file[:path], sha: file[:sha], lines: lines(filetype), content: @content }
         end
       end
@@ -87,36 +85,24 @@ class Repo < ActiveRecord::Base
   end
 
   def lines(filetype)
-=begin
-  1. Figure out the language based on the file path
-  2. Figure out the commenting syntax for that language
-    a. single line
-    b. multi line
-  3. Parse through the content to look for comments, depending on the language
-    a. if single line
-      -search for TODOS and BUGBUGs until the end of the line
-    b. if multiline
-      -search for todos and bubugs until ending comment syntax (eg- for ruby, its '=end')
-=end
     line_arr = []
     @content.split(%r{\n}).each_with_index do |line, index|
-      case filetype
-      when "rb"
-        if any_todos?(line, "#")
-          line_arr << index + 1
-        end
-      when "py"
-        line_arr << index + 1 unless line.any_todos?("//").empty?
-      else
-        []
-      end
+      line_arr << index + 1 if any_todos?(line, comment_syntax(filetype))
     end
     line_arr
   end
 
-  def any_todos?(text, comment) # This will only work for // and # style comments.
-    regex = /^[\t ]*[^\s#{comment}][^#{comment}\n\r]*#{comment}([^#{comment}\n\r]*[todo|to do|bugbug|bug]*.*)/i
-    !text.scan(regex).flatten.empty?
+  def comment_syntax(filetype)
+    case filetype
+    when "rb" || "py"
+      "#"
+    when "py"
+      Regexp.escape "//"
+    end
+  end
+
+  def any_todos?(text, comment)
+    !text.scan(/#{comment}(.*(todo|to do|bug)$)/i).flatten.empty?
   end
 
   def parse_file_ext(value)
