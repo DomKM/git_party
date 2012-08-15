@@ -1,3 +1,6 @@
+# A crawler to fetch the most popular repos from Github.
+# The repos are saved into a set.
+
 require 'open-uri'
 require 'cgi'
 require 'set'
@@ -6,8 +9,6 @@ module GHCrawler
   class Crawler
 
     attr_accessor :popular_set
-
-    # this creates a crawler to crawl all three pages on github that list popular repos. the repos are saved into a set.
 
     def initialize
       @popular_set = Set.new
