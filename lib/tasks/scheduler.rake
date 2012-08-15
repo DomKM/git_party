@@ -8,7 +8,7 @@ task :update_repo => :environment do
   puts "** All records were created successfully"
 end
 
-task :scrape_popular => :environment do
+task :popular_repos => :environment do
   GHCrawler::Crawler.new.crawl_all_pages.each { |repo| Repo.create(repo) }
   puts "** Scraping complete. Repo objects were created successfully"
 end
