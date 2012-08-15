@@ -1,6 +1,5 @@
 class ReposController < ApplicationController
   # respond_to :html, :json, :js
-
   def index
     @repos = Repo.all
   end
@@ -29,7 +28,5 @@ class ReposController < ApplicationController
   end
 
   def update
-
   end
-
 end
