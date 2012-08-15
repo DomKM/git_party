@@ -112,7 +112,7 @@ class Repo < ActiveRecord::Base
   end
 
   def extension?(value)
-    !value.match(/\.\w+/i).nil?
+    value.match(/\.\w+/i)
   end
 
   def json(string)
