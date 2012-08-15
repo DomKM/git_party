@@ -122,7 +122,6 @@ class Repo < ActiveRecord::Base
   def http_get(path, opts = {})
     query = "?client_id=#{ ENV['GITHUB_ID'] }&client_secret=#{ ENV['GITHUB_SECRET_TOKEN'] }"
     url = "https://api.github.com/" + path + query
-    p url
     RestClient.get(url, opts)
   end
 
