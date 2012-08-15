@@ -72,7 +72,6 @@ class Repo < ActiveRecord::Base
     tree.find_all { |f| f[:type] == "blob" }.each do |file|
       if extension?(file[:path]) # Makes sure that there is a file extension
         filetype = parse_file_ext(file[:path])
-        p comment_syntax(filetype)
         if any_todos?( content(file[:sha]), comment_syntax(filetype) )
           @todos[file[:sha]] = { path: file[:path], sha: file[:sha], lines: lines(filetype), content: @content }
         end
@@ -113,7 +112,7 @@ class Repo < ActiveRecord::Base
   end
 
   def extension?(value)
-    !value.match(/\.\w+/i).nil?
+    value.match(/\.\w+/i)
   end
 
   def json(string)
