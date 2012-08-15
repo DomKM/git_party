@@ -72,6 +72,7 @@ class Repo < ActiveRecord::Base
     tree.find_all { |f| f[:type] == "blob" }.each do |file|
       if extension?(file[:path]) # Makes sure that there is a file extension
         filetype = parse_file_ext(file[:path])
+        p comment_syntax(filetype)
         if any_todos?( content(file[:sha]), comment_syntax(filetype) )
           @todos[file[:sha]] = { path: file[:path], sha: file[:sha], lines: lines(filetype), content: @content }
         end
@@ -94,15 +95,17 @@ class Repo < ActiveRecord::Base
 
   def comment_syntax(filetype)
     case filetype
-    when "rb" || "py"
+    when "rb" || "py" || "pl" || "pm" ||"php"
       "#"
-    when "py"
+    when "js" || "cpp" || "cxx" || "c" || "java" || "m"
       Regexp.escape "//"
+    when "html"
+      Regexp.escape "<!--"
     end
   end
 
   def any_todos?(text, comment)
-    !text.scan(/#{comment}(.*(todo|to do|bug)$)/i).flatten.empty?
+    !text.scan(/#{comment}(.*(todo|to do|bug).*$)/i).flatten.empty?
   end
 
   def parse_file_ext(value)
