@@ -101,28 +101,6 @@ GEM
     pjax_rails (0.3.2)
       jquery-rails
     polyglot (0.3.3)
-    posix-spawn (0.3.6)
-    pry (0.9.10)
-      coderay (~> 1.0.5)
-      method_source (~> 0.8)
-      slop (~> 3.3.1)
-    pry-debugger (0.2.0)
-      debugger (~> 1.1.3)
-      pry (~> 0.9.9)
-    pry-doc (0.4.4)
-      pry (>= 0.9.9.6)
-      yard (~> 0.8.1)
-    pry-git (0.2.3)
-      diffy
-      grit
-      pry (>= 0.9.8)
-    pry-remote (0.1.6)
-      pry (~> 0.9)
-      slop (~> 3.0)
-    pry-stack_explorer (0.4.5)
-      binding_of_caller (~> 0.6.2)
-    quiet_assets (1.0.1)
-      railties (~> 3.1)
     quiet_assets (1.0.1)
       railties (~> 3.1)
     rack (1.4.1)
@@ -222,6 +200,7 @@ DEPENDENCIES
   haml-rails (>= 0.3.4)
   jquery-rails
   json
+  nokogiri
   pg (>= 0.14.0)
   pjax_rails
   quiet_assets
