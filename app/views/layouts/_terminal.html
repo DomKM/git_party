@@ -3,7 +3,6 @@
     var userInput = command.split(" ");
     var userCommand = userInput[0].toLowerCase();
     var userArgs = userInput.slice(1);
-    var searchStr = userArgs.join("#");
     var argsStr = userArgs.join(" ");
     var showRepo = function() {
       term.echo("Showing: ".concat(argsStr));
@@ -17,13 +16,23 @@
       $.pjax({
         url: "/",
         container: '.data-pjax-container',
-        data: { search: searchStr }
+        data: { search: argsStr },
+        error: function() {
+          term.echo(String.concat(userArgs, " not found. Type 'help' for more information."))
+        }
       })
     };
     var index = function() {
       term.echo("Home sweet home");
       $.pjax({
         url: "/",
+        container: '.data-pjax-container'
+      })
+    };
+    var roulette = function() {
+      term.echo("Git Roulette!");
+      $.pjax({
+        url: "/roulette",
         container: '.data-pjax-container'
       })
     };
@@ -41,13 +50,15 @@
       index()
     } else if (userCommand === "help") {
       help()
-    } else if (userCommand == "about") {
+    } else if (userCommand === "about") {
       about()
+    } else if (userCommand === "roulette") {
+      roulette()
     } else {
       term.echo("Unknown command. Enter 'help' for information.");
     }
   }, { 
     prompt: '>',
-    greetings: "Welcome to Git Party"
+    greetings: "Welcome to Git Party\n this is a placeholder"
   });
 </script>
