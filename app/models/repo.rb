@@ -26,7 +26,7 @@ class Repo < ActiveRecord::Base
 
   def update!
     TodoFile.destroy_all(repo_id: id)
-    github.each_value do |todo|
+    todos.each_value do |todo|
       t = todo_files.create(todo.reject { |k, v| k == :lines })
       todo[:lines].each do |line|
         t.todo_lines.create( line_num: line )
@@ -54,10 +54,6 @@ class Repo < ActiveRecord::Base
     self.save
   end
 
-  def include_todo?(line)
-    line.downcase.include?('todo') || line.downcase.include?('bugbug')
-  end
-
   def info
     return @info if @info
     @info = json_get("repos/#{owner}/#{name}")
@@ -70,31 +66,53 @@ class Repo < ActiveRecord::Base
     @tree = response[:tree]
   end
 
-  def files
-    return @files if @files
-    @files = {}
-    tree.find_all {|f| f[:type] == "blob"}.each do |obj|
-      @files[obj[:sha]] = { path: obj[:path], sha: obj[:sha], lines: [], content: get_content(obj[:sha]) }
-    end
-    @files
-  end
-
-  def get_content(sha)
-    http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
-  end
-
-  def todos
+  def todos # Formerly 'files'
     return @todos if @todos
     @todos = {}
-    files.each do |key, value|
-      value[:content  ].split(%r{\n}).each_with_index do |line, index|
-        if include_todo?(line)
-          value[:lines] << index + 1
-          @todos[key] = value
+    tree.find_all { |f| f[:type] == "blob" }.each do |file|
+      if extension?(file[:path]) # Makes sure that there is a file extension
+        filetype = parse_file_ext(file[:path])
+        if any_todos?( content(file[:sha]), comment_syntax(filetype) )
+          @todos[file[:sha]] = { path: file[:path], sha: file[:sha], lines: lines(filetype), content: @content }
         end
       end
     end
     @todos
+  end
+
+  def content(sha)
+    @content = http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
+  end
+
+  def lines(filetype)
+    line_arr = []
+    @content.split(%r{\n}).each_with_index do |line, index|
+      line_arr << index + 1 if any_todos?(line, comment_syntax(filetype))
+    end
+    line_arr
+  end
+
+  def comment_syntax(filetype) # This should probably go in another file?
+    case filetype
+    when "rb" || "py" || "pl" || "pm" ||"php"
+      "#"
+    when "js" || "cpp" || "cxx" || "c" || "java" || "m"
+      Regexp.escape "//"
+    when "html"
+      Regexp.escape "<!--"
+    end
+  end
+
+  def any_todos?(text, comment)
+    !text.scan(/#{comment}(.*(todo|to do|bug).*$)/i).flatten.empty?
+  end
+
+  def parse_file_ext(value)
+    value.match(/\.\w+/i)[0][1..-1]  # Returns first instance of everything after the first dot
+  end
+
+  def extension?(value)
+    value.match(/\.\w+/i)
   end
 
   def json(string)
@@ -110,5 +128,4 @@ class Repo < ActiveRecord::Base
     response = http_get(path, opts)
     json(response)
   end
-
 end
