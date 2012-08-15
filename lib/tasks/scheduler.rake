@@ -5,7 +5,7 @@ desc "This task is called by the Heroku scheduler add-on"
 
 task :update_repo => :environment do
   Repo.all.each do  |r|
-    if updatable
+    if updatable?
       r.update! if r.updated?
     end
   end
