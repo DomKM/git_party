@@ -4,17 +4,29 @@
     var userCommand = userInput[0].toLowerCase();
     var userArgs = userInput.slice(1);
     var argsStr = userArgs.join(" ");
-    var commandsEcho = "Commands:\nabout\techoes the 'about' message\nhelp\techoes detailed instructions a given command\nhome\treturns you to the home page\nshow\tshows information about a given repo\nsearch\tsearches repos with given query\nroulette\tshows information about a random repo\ncommands\techoes this message";
-    var aboutEcho = "GitParty aims to reduce the friction in getting involved contributing to opensource projects. It scans popular GitHub repos for potential todos.\nGitParty was developed in two weeks by Dev Bootcamp students: @MattNguyen, @junejung,  @asada, and @DomKM. We had been learning to program for eight weeks prior to beginning development on GitParty.";
-    var unknownEcho = "Unknown command. Enter 'commands' for information.";
-    var helpShowEcho = "help show placeholder";
-    var helpSearchEcho = "help search placeholder";
-    var helpHomeEcho = "help home placeholder";
-    var helpAboutEcho = "help about placeholder";
-    var helpCommandsEcho = "help commands placeholder";
-    var helpRouletteEcho = "help roulette placeholder";
+    var unknownEcho = "Unknown command. Enter 'commands' for more information.";
+    var commandsEcho = "Commands:\n     about\techoes the 'about' message\n      help\techoes detailed instructions a given command\n      home\treturns you to the home page\n      show\tshows information about a given repo\n    search\tsearches repos with given query\n  roulette\tshows information about a random repo\n  commands\techoes this message";
+    var aboutEcho = "GitParty aims to reduce the friction in getting involved contributing to opensource projects. It scans popular GitHub repos for potential todos.\nGitParty was developed in two weeks by Dev Bootcamp students: Matt Nguyen, June Jung, Asad Akbar, and Dom Kiva-Meyer. We had been learning to program for eight weeks prior to beginning development on GitParty.\nEnter 'about [firstName]' for detailed information.";
+    var aboutMatt = "Matt is awesome."
+    var aboutJune = "June is awesome."
+    var aboutAsad = "Asad is awesome."
+    var aboutDom = "Dom is really awesome."
+    var helpShowEcho = "Shows a specific repo.\nEnter: show [owner]/[name]";
+    var helpSearchEcho = "Searches repos based on arguments provided.\nFormat: search [WHERE] [ORDER]\n\tWhere format: (attribute operator value)\n\tOrder format: order[attribute.sort]\n\tNote: WHERE and ORDER are optional.\nOperators\tAttributes\n==\towner\n!=\tname\n<\ttodos\n>\tstars\n<=\tforks\n>=\tissues\n=~\tlanguage\n!=\tdescription\nExamples:\n\tWhere owner is DHH:\n\t\tsearch (owner == 'DHH')\n\tOrdered by creation date (ascending):\n\t\tsearch order[created_at.asc]\n\tWhere owner is DHH, ordered by forks (ascending):\n\t\tsearch (owner == DHH) order[forks.asc]\n\tWhere owner is DHH or tenderlove:\n\t\tsearch (owner == 'DHH') | (owner == 'tenderlove')\n\tWhere...";
+    var helpHomeEcho = "Returns you to the index page.";
+    var helpAboutEcho = "Echoes the about message.";
+    var helpCommandsEcho = "Echoes information about all available commands.";
+    var helpRouletteEcho = "Everyone loves to gamble.";
     var helpHelpEcho = "Seriously?";
     var pjaxify = function(opts) {
+      // var xhrStatus = "bloop";
+      $(document).on('pjax:error', function(e, xhr, err) { 
+        // xhrStatus = xhr.status;
+        return false
+      });
+      // var xhrErrorMessage = function() {
+      //   return xhrStatus.toString()
+      // }
       $.pjax({
         url: opts.path,
         container: '.data-pjax-container',
@@ -26,16 +38,16 @@
     var commands = function() {
       term.echo(commandsEcho)
     };
-    var about = function() {
-      term.echo(aboutEcho)
-    };
     var showRepo = function() {
-      // TODO add exception handler for improperly formatted queries
-      pjaxify({
-        path: "/".concat(userArgs),
-        successMessage: "Showing: ".concat(argsStr), 
-        errorMessage: "error" 
-      })
+      if (/.+\/.+/.test(userArgs[0]) === true) {
+        pjaxify({
+          path: "/".concat(userArgs),
+          successMessage: "Showing: ".concat(argsStr), 
+          errorMessage: "Invalid repo. Enter 'commands' for more information."
+        })
+      } else {
+        term.error("Enter: 'show [owner/name]'\nExample: show DomKM/git_party")
+      }
     };
     var searchRepos = function() {
       pjaxify({
@@ -59,6 +71,23 @@
         errorMessage: "Gambling is bad :("
       })
     };
+    var about = function() {
+      if (userArgs.length === 0) {
+        term.echo(aboutEcho)
+      } else if (userArgs[0].toLowerCase() === "matt") {
+        term.echo(aboutMatt)
+      } else if (userArgs[0].toLowerCase() === "june") {
+        term.echo(aboutJune)
+      } else if (userArgs[0].toLowerCase() === "asad") {
+        term.echo(aboutAsad)
+      } else if (userArgs[0].toLowerCase() === "dom") {
+        term.echo(aboutDom)
+      } else if (userArgs[0].toLowerCase() === "dev" || userArgs[0].toLowerCase() === "devbootcamp") {
+        window.open("http://devbootcamp.com", '_blank')
+      } else {
+          term.error("Enter: 'about' or 'about [firstName]'")
+      }
+    };
     var help = function() {
       if (userArgs.length === 0 || userArgs.length > 1) {
         term.error("Enter: help [command]")
@@ -77,7 +106,7 @@
       } else if (userArgs[0] === "help") {
         term.echo(helpHelpEcho)
       } else {
-        term.echo(unknownEcho)
+        term.error(unknownEcho)
       }
     };
     if (userCommand === "show") {
@@ -95,11 +124,10 @@
     } else if (userCommand === "help") {
       help()
     } else {
-      term.echo(unknownEcho);
+      term.error(unknownEcho);
     }
   }, {
     prompt: '> ',
-    greetings: "Welcome to Git Party\n this is a placeholder"
+    greetings: "Welcome to Git Party\nGitParty is the easiest way to get involved in opensource projects. Enter 'commands' for information on available commands or enter 'show [owner/name]' to go straight to a repo that interests you."
   });
-  $(document).on('pjax:error', function() { return false});
 </script>

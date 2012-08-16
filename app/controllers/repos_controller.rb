@@ -7,7 +7,7 @@ class ReposController < ApplicationController
         @repos = search(params[:search])
       else
         @repos = Repo.where{todos > 0}.order{[stars.asc,forks.asc]}.to_a
-        head(status: 404) if @repos.empty?
+        # head(status: 404) if @repos.empty?
         # TODO add client side handling of empty search
       end
     rescue *exceptions
