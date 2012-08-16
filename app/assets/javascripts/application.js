@@ -16,9 +16,3 @@
 //= require pjax
 //= require_tree .
 
- $(document).ready(function() {
-  $('.data-pjax-container').css('height', $(window).height());
-});
- $(document).ready(function() {
-  $('#terminal').css('height', $(window).height());
-});

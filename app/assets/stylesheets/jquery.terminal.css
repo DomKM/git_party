@@ -8,51 +8,35 @@
     filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.01);
     width: 2px;
 }
+
 .cmd > .clipboard {
     position: fixed;
 }
+
 .terminal {
     padding: 10px;
     position: relative;
     overflow: hidden;
+    line-height: 1.25px;
 }
+
 .cmd {
     padding: 0;
     margin: 0;
     height: 1.3em;
 }
+
 .terminal .terminal-output div {
     display: #000088;
+     line-height: 1.25;
 }
-.terminal{
+
+.terminal {
     font-family: monospace;
     color: #FFFFFF;
     background-color: #002b36; /*frame background*/
     font-size: 16px;
-    line-height: 14px;
-}
-.terminal .terminal-output div div{
-    font-family: monospace;
-    color: #FFFFFF;
-    background-color: #002b36;
-    font-size: 16px;
-    line-height: 14px;
-}
-
-.cmd{
-    font-family: monospace;
-    color: #2aa198;
-    background-color: #073642; /*input line background*/
-    font-size: 16px;
-    line-height: 14px;
-}
-
-.terminal .cmd span{
-    font-family: monospace;
-    color: #cb4b16; /*input line font color*/
-    background-color: #657b83;
-    font-size: 16px;
-    line-height: 14px;
+    line-height: 1.25;
 }
 
 .terminal .cmd div {
@@ -60,7 +44,7 @@
     color: #cb4b16;
     background-color: #073642;
     font-size: 16px;
-    line-height: 14px;
+    line-height: 1.25;
 }
 
 .terminal .terminal-output{
@@ -68,7 +52,24 @@
     color: #cb4b16;
     background-color: red;
     font-size: 16px;
-    line-height: 14px;
+    line-height: 1.25;
+}
+
+.cmd {
+    font-family: monospace;
+    color: #2aa198;
+    background-color: #073642; /*input line background*/
+    font-size: 16px;
+    line-height: 1.25;
+    height: 19px;
+    margin: 2px 0;
+}
+
+.terminal .cmd span{
+    font-family: monospace;
+    color: #cb4b16; /*input line font color*/
+    font-size: 16px;
+    line-height: 1.25;
 }
 
 .terminal .terminal-output div {
@@ -76,26 +77,32 @@
     color: #93a1a1; /* Output line */
     background-color: #002b36;
     font-size: 16px;
-    line-height: 14px;
+    line-height: 1.25;
 }
+
 .terminal .cmd span {
     float: left;
 }
+
 .terminal .cmd span.inverted {
     background-color: #073642;
     color: #000;
 }
+
 .terminal div::-moz-selection, .terminal span::-moz-selection {
     background-color: #aaa;
     color: #000;
 }
+
 .terminal div::selection, .terminal span::selection {
     background-color: #aaa;
     color: #000;
 }
+
 .terminal .terminal-output div.error, .terminal .terminal-output div.error div {
     color: red;
 }
+
 .tilda {
     position: fixed;
     top: 0;
@@ -103,7 +110,11 @@
     width: 100%;
     z-index: 1100;
 }
+
+.cursor {
+  background-color: #657B83;
+}
+
 .clear {
     clear: both;
 }
-                    

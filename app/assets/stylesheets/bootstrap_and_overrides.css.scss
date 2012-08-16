@@ -1,9 +1,61 @@
+@import "bootstrap-responsive";
 @import "bootstrap";
+@import "compass";
+
+html {
+  height: 100%;
+  overflow:auto;
+}
+
 body {
-  background: #073642;
+  overflow:hidden;
+  height: 100%;
+  background-color: #222;
   font-family: monospace;
   color: #93a1a1;
-  background-color: #073642;
   font-size: 16px;
-  line-height: 14px;};
-@import "bootstrap-responsive";
+  line-height: 14px;
+  padding: 0;
+};
+
+.container-fluid {
+  overflow:auto;
+  height: 100% !important;
+  padding: 0;
+  margin: 0;
+}
+
+.span6 {
+  overflow:auto;
+  padding: 0 !important;
+  width: 50% !important;
+  height: 100% !important;
+  margin: 0 !important;
+}
+
+.data-pjax-container {
+  overflow:auto;
+  min-height: 100%;
+  background: #073642;
+}
+
+.terminal {
+  overflow:auto;
+  min-height: 98.2%;
+}
+
+/*Scrollbar*/
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
