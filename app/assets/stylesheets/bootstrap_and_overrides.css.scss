@@ -10,52 +10,63 @@ html {
 body {
   overflow:hidden;
   height: 100%;
-  background-color: #222;
+  /*@include background(linear-gradient(#222, #111, #222));*/
+  @include background(image-url('black_denim.png'));
   font-family: monospace;
   color: #93a1a1;
   font-size: 16px;
   line-height: 14px;
-  padding: 0;
 };
 
-.container-fluid {
-  overflow:auto;
+.container-fluid, .container, .row-fluid {
   height: 100% !important;
-  padding: 0;
-  margin: 0;
 }
 
+.container-fluid {
+  padding: 0;
+}
+
+.container {
+  width: 1600px;
+  @include box-shadow(#111 1px 1px 12px, #111 -1px -1px 12px)
+}
+
+
 .span6 {
-  overflow:auto;
-  padding: 0 !important;
+  overflow-y: scroll;
+  overflow-x: hidden;
   width: 50% !important;
   height: 100% !important;
   margin: 0 !important;
 }
 
 .data-pjax-container {
-  overflow:auto;
+  padding-left: 8px;
+  padding-bottom: 8px;
   min-height: 100%;
   background: #073642;
 }
 
 .terminal {
   overflow:auto;
-  min-height: 98.2%;
+  min-height: 98.1%;
 }
 
 /*Scrollbar*/
 
 ::-webkit-scrollbar {
+  background: #073642;
   width: 12px;
 }
 
 ::-webkit-scrollbar-track {
+  background: #073642;
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
+  background: #073642;
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }

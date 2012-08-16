@@ -12,10 +12,12 @@
     = csrf_meta_tags
     = yield(:head)
   %body
-    .container-fluid
-      .span6
-        .data-pjax-container
-          = yield
-      .span6
-        #terminal
-          = render 'layouts/terminal'
+    .container
+      .container-fluid
+        .row-fluid
+          .span6
+            .data-pjax-container
+              = yield
+          .span6
+            #terminal
+              = render 'layouts/terminal'

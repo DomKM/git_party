@@ -11,16 +11,6 @@ class ReposController < ApplicationController
     rescue *exceptions
       head_or_redirect(400)
     end
-
-<<<<<<< HEAD
-    #TODO return error to be handled by client if search returns 0 results
-  
-=======
-  def show
-    @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
-    # respond_with @repo
-    # @todos = self.Todo_files
->>>>>>> design
   end
 
   def show
@@ -35,7 +25,7 @@ class ReposController < ApplicationController
   private
 
   def head_or_redirect(status)
-    # BUGBUG I get a tASSOC error when putting these two 'pjax?' lines in a 1-line ternary 
+    # BUGBUG I get a tASSOC error when putting these two 'pjax?' lines in a 1-line ternary
     head :status => status if pjax?
     redirect_to root_path if !pjax?
   end
@@ -43,7 +33,7 @@ class ReposController < ApplicationController
   def search(str)
 
     #TODO add default search (all repos) so user can only pass an order
-    
+
     gsub_string!(str).match(/order/)
     w = match_string(str, :pre_match) || str
     o = match_string(str, :post_match) || "[stars.asc, forks.asc]"
