@@ -1,5 +1,5 @@
-@import "bootstrap-responsive";
 @import "bootstrap";
+@import "bootstrap-responsive";
 @import "compass";
 
 html {
@@ -10,7 +10,6 @@ html {
 body {
   overflow:hidden;
   height: 100%;
-  /*@include background(linear-gradient(#222, #111, #222));*/
   @include background(image-url('black_denim.png'));
   font-family: monospace;
   color: #93a1a1;
@@ -30,7 +29,6 @@ body {
   width: 1600px;
   @include box-shadow(#111 1px 1px 12px, #111 -1px -1px 12px)
 }
-
 
 .span6 {
   overflow-y: scroll;
