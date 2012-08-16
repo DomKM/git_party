@@ -22,3 +22,8 @@
  $(document).ready(function() {
   $('#terminal').css('height', $(window).height());
 });
+ $('#terminal').keyup(
+  function(e){
+    $('#terminal .cmd span').css('color', red);
+  }
+)
