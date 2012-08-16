@@ -3,12 +3,9 @@ include GHCrawler
 
 desc "This task is called by the Heroku scheduler add-on"
 
-<<<<<<< HEAD
-=======
 # Rake task will fail if tree branch is not master
 # Need to fix api method logic
 
->>>>>>> fix-regex
 task :update_repos => :environment do
   Repo.all.each do  |r|
     puts "Updating (ID #{r.id}) #{r.owner}/#{r.name}..."
