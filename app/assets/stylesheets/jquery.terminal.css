@@ -103,6 +103,10 @@
     color: red;
 }
 
+.terminal .prompt {
+    color: red;
+}
+
 .tilda {
     position: fixed;
     top: 0;

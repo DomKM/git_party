@@ -3,7 +3,7 @@ include GHCrawler
 
 desc "This task is called by the Heroku scheduler add-on"
 
-task :update_repo => :environment do
+task :update_repos => :environment do
   Repo.all.each do  |r|
     if r.updatable?
       r.update! if r.updated?
