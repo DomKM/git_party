@@ -14,4 +14,7 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require pjax
+//= require XRegExp
+//= require shCore
 //= require_tree .
+
