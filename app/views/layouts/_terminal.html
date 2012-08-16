@@ -4,49 +4,83 @@
     var userCommand = userInput[0].toLowerCase();
     var userArgs = userInput.slice(1);
     var argsStr = userArgs.join(" ");
-
+    var commandsEcho = "Commands:\nabout\techoes the 'about' message\nhelp\techoes detailed instructions a given command\nhome\treturns you to the home page\nshow\tshows information about a given repo\nsearch\tsearches repos with given query\nroulette\tshows information about a random repo\ncommands\techoes this message";
+    var aboutEcho = "GitParty aims to reduce the friction in getting involved contributing to opensource projects. It scans popular GitHub repos for potential todos.\nGitParty was developed in two weeks by Dev Bootcamp students: @MattNguyen, @junejung,  @asada, and @DomKM. We had been learning to program for eight weeks prior to beginning development on GitParty.";
+    var unknownEcho = "Unknown command. Enter 'commands' for information.";
+    var helpShowEcho = "help show placeholder";
+    var helpSearchEcho = "help search placeholder";
+    var helpHomeEcho = "help home placeholder";
+    var helpAboutEcho = "help about placeholder";
+    var helpCommandsEcho = "help commands placeholder";
+    var helpRouletteEcho = "help roulette placeholder";
+    var helpHelpEcho = "Seriously?";
+    var pjaxify = function(opts) {
+      $.pjax({
+        url: opts.path,
+        container: '.data-pjax-container',
+        data: opts.dataObj,
+        success: function() { term.echo(opts.successMessage) },
+        error: function() { term.error(opts.errorMessage) }
+      })
+    };
     var commands = function() {
-      term.echo("these are the commands")
+      term.echo(commandsEcho)
     };
     var about = function() {
-      term.echo("[[uib;#000;#00ee11]chickens!]")
-    }
+      term.echo(aboutEcho)
+    };
     var showRepo = function() {
-      $.pjax({
-        url: "/".concat(userArgs),
-        container: '.data-pjax-container',
-        success: function() { term.echo("Showing: ".concat(argsStr))},
-        error: function() {
-          term.echo("error")
-        }
+      // TODO add exception handler for improperly formatted queries
+      pjaxify({
+        path: "/".concat(userArgs),
+        successMessage: "Showing: ".concat(argsStr), 
+        errorMessage: "error" 
       })
     };
     var searchRepos = function() {
-      term.echo("Searching for repos where: ".concat(argsStr));
-      $.pjax({
-        url: "/",
-        container: '.data-pjax-container',
-        data: { search: argsStr },
+      pjaxify({
+        path: "/",
+        successMessage: "Searching for repos where: ".concat(argsStr),
+        errorMessage: "Invalid query. Enter 'help search' for more information.",
+        dataObj: { search: argsStr }
       })
     };
     var index = function() {
-      term.echo("Home sweet home");
-      $.pjax({
-        url: "/",
-        container: '.data-pjax-container'
+      pjaxify({
+        path: "/",
+        successMessage: "Home! Sweet Home!",
+        errorMessage: "No Home for you!",
       })
     };
     var roulette = function() {
-      term.echo("Repo Roulette!");
-      $.pjax({
-        url: "/roulette",
-        container: '.data-pjax-container'
+      pjaxify({
+        path: "/roulette",
+        successMessage: "Repo Roulette!",
+        errorMessage: "Gambling is bad :("
       })
     };
     var help = function() {
-      term.echo("this is the help message")
+      if (userArgs.length === 0 || userArgs.length > 1) {
+        term.error("Enter: help [command]")
+      } else if (userArgs[0] === "show") {
+        term.echo(helpShowEcho)
+      } else if (userArgs[0] === "search") {
+        term.echo(helpSearchEcho)
+      } else if (userArgs[0] === "home") {
+        term.echo(helpHomeEcho)
+      } else if (userArgs[0] === "about") {
+        term.echo(helpAboutEcho)
+      } else if (userArgs[0] === "commands") {
+        term.echo(helpCommandsEcho)
+      } else if (userArgs[0] === "roulette") {
+        term.echo(helpRouletteEcho)
+      } else if (userArgs[0] === "help") {
+        term.echo(2helpHelpEcho)
+      } else {
+        term.echo(unknownEcho)
+      }
     };
-    if (userCommand === 'show') {
+    if (userCommand === "show") {
       showRepo()
     } else if (userCommand === "search") {
       searchRepos()
@@ -61,7 +95,7 @@
     } else if (userCommand === "help") {
       help()
     } else {
-      term.echo("Unknown command. Enter 'commands' for information.");
+      term.echo(unknownEcho);
     }
   }, {
     prompt: '> ',
