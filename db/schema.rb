@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120816061512) do
+ActiveRecord::Schema.define(:version => 20120816063424) do
 
   create_table "repos", :force => true do |t|
     t.string   "name"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(:version => 20120816061512) do
     t.integer  "stars"
     t.integer  "issues"
     t.integer  "todos"
+    t.string   "git_url"
   end
 
   add_index "repos", ["description"], :name => "index_repos_on_description"

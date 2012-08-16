@@ -36,7 +36,7 @@ class Repo < ActiveRecord::Base
     update_info!
   end
 
-  private
+  # private
 
   def rate_remaining
     response = json_get("rate_limit")
@@ -52,6 +52,7 @@ class Repo < ActiveRecord::Base
     self.forks = info[:forks]
     self.stars = info[:watchers]
     self.issues = info[:open_issues]
+    self.git_url = info[:git_url]
     self.todos = self.todo_lines.length
     self.save
   end
