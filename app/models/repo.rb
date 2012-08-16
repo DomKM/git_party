@@ -3,7 +3,6 @@ class Repo < ActiveRecord::Base
   validates_presence_of :name, :owner
   has_many :todo_files, dependent: :destroy
   has_many :todo_lines, through: :todo_files
-  # before_create :update!
 
   def real?
     begin
@@ -52,6 +51,8 @@ class Repo < ActiveRecord::Base
     self.forks = info[:forks]
     self.stars = info[:watchers]
     self.issues = info[:open_issues]
+    self.git_url = info[:git_url]
+    self.todos = self.todo_lines.length
     self.save
   end
 
