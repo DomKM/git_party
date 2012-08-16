@@ -41,6 +41,7 @@ body {
 }
 
 .data-pjax-container {
+  padding-top: 13px;
   padding-left: 8px;
   padding-bottom: 8px;
   min-height: 100%;
@@ -50,6 +51,38 @@ body {
 .terminal {
   overflow:auto;
   min-height: 98.1%;
+}
+
+/*Index Page*/
+
+th {
+  height:30px;
+}
+td {
+  height:20px;
+}
+.title {
+  margin-bottom: 10px;
+  color: #cb4b16;
+  font-size: 30px;
+}
+.data-pjax-container .tabletitle{
+  color: #b58900;
+  text-align: center;
+}
+.data-pjax-container .tablename{
+  color: #268bd2;
+  font-size: 16px;
+}
+.data-pjax-container .tablecount{
+  color: #859900;
+  text-align: center;
+  font-size: 16px;
+}
+.data-pjax-container .tablela{
+  color: #d33682;
+  text-align: center;
+  font-size: 16px;
 }
 
 /*Scrollbar*/
@@ -69,4 +102,26 @@ body {
   background: #073642;
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+
+/*Media Queries*/
+
+/* Landscape phones and down */
+@media (max-width: 480px) {
+  .container { width: 480px; }
+}
+
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) {
+  .container { width: 767px; }
+}
+
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) {
+  .container { width: 850px; }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+  .container { width: 1200; }
 }
