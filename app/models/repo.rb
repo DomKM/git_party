@@ -61,6 +61,8 @@ class Repo < ActiveRecord::Base
     @info = json_get("repos/#{owner}/#{name}")
   end
 
+  # Will fail if there is no master branch
+  #
   def tree
     return @tree if @tree
     path = "repos/#{owner}/#{name}/git/trees/master"
@@ -105,8 +107,12 @@ class Repo < ActiveRecord::Base
     end
   end
 
+  #There are so many things wrong with this regexp.
+  #1. It doesn't catch everything in the comments
+  #2. It captures 'debug' when we want just 'bug'
+
   def any_todos?(text, comment)
-    !text.scan(/#{comment}(.*(todo|to do|bug).*$)/i).flatten.empty?
+    !text.scan(/#{comment}(.*(todo|bugbug).*$)/i).flatten.empty?
   end
 
   def parse_file_ext(value)

@@ -6,7 +6,7 @@ class ReposController < ApplicationController
       if params[:search]
         @repos = search(params[:search])
       else
-        @repos = Repo.where{todos > 0}.order{[stars.asc,forks.asc]}.to_a
+        @repos = Repo.where{todos > 0}.order{[stars.asc, forks.asc]}.to_a
         # head(status: 404) if @repos.empty?
         # TODO add client side handling of empty search
       end

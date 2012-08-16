@@ -26,13 +26,11 @@ body {
 }
 
 .container {
-  width: 1200px;
   @include box-shadow(#111 1px 1px 12px, #111 -1px -1px 12px);
 }
 
 .span6 {
   overflow-y: scroll;
-  overflow-x: hidden;
   width: 50% !important;
   height: 100% !important;
   margin: 0 !important;
@@ -42,7 +40,7 @@ body {
   padding-top: 13px;
   padding-left: 8px;
   padding-bottom: 8px;
-  min-height: 100%;
+  min-height: 98%;
   background: #073642;
 }
 
@@ -53,16 +51,26 @@ body {
 
 /*Index Page*/
 
+.table tbody tr:hover td, .table tbody tr:hover th, .table tbody tr th, .table tbody tr td {
+  background-color: transparent;
+  border: none;
+}
+
 th {
   height:30px;
 }
+
 td {
   height:20px;
 }
+
 .title {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   color: #cb4b16;
-  font-size: 30px;
+  font-size: 40px;
+  text-align: center;
+  word-wrap: break-word;
+  line-height: .8;
 }
 .data-pjax-container .tabletitle{
   color: #b58900;
@@ -82,6 +90,60 @@ td {
   text-align: center;
   font-size: 16px;
 }
+
+/* Show page */
+
+.info {
+  margin: 20px 0;
+}
+
+.single-todo {
+  margin: 10px 0;
+  p {
+    margin-bottom: 3px;
+    color: #859900;
+  }
+}
+
+.infobox {
+  width: 98%;
+  padding:5px;
+}
+
+.header {
+  font-family: monospace;
+  font-size: 25px;
+  color: #b58900;
+  span {
+    color: #93A1A1;
+  }
+}
+
+.box {
+  width: 98%;
+  padding:5px;
+  border:1px solid gray;
+}
+
+.connection {
+  font-family: monospace;
+  color: black;
+  font-size: 16px;
+}
+
+.tablefield {
+  font-family: monospace;
+  color: #859900;
+  font-size: 16px;
+  width: 150px;
+}
+
+.highlight {
+  font-family: monospace;
+  color: #268bd2;
+  font-size: 16px;
+}
+
 
 /*Scrollbar*/
 
@@ -111,15 +173,20 @@ td {
 
 /* Landscape phone to portrait tablet */
 @media (max-width: 767px) {
-  .container { width: 767px; }
+  .container { width: 767px; overflow: auto; }
+  .span6 { height: 50%;}
 }
 
 /* Portrait tablet to landscape and desktop */
-@media (min-width: 768px) and (max-width: 979px) {
+@media (max-width: 850px) {
   .container { width: 850px; }
+}
+
+@media (max-width: 979px) {
+  .container { width: 979px; }
 }
 
 /* Large desktop */
 @media (min-width: 1201px) {
-  .container { width: 1600; }
+  .container { width: 1600px; }
 }
