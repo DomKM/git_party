@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120812205953) do
+ActiveRecord::Schema.define(:version => 20120814225050) do
 
   create_table "repos", :force => true do |t|
     t.string   "name"
@@ -28,8 +28,16 @@ ActiveRecord::Schema.define(:version => 20120812205953) do
     t.integer  "issues"
   end
 
+  add_index "repos", ["description"], :name => "index_repos_on_description"
+  add_index "repos", ["forks"], :name => "index_repos_on_forks"
+  add_index "repos", ["github_created_at"], :name => "index_repos_on_github_created_at"
+  add_index "repos", ["github_updated_at"], :name => "index_repos_on_github_updated_at"
+  add_index "repos", ["homepage"], :name => "index_repos_on_homepage"
+  add_index "repos", ["issues"], :name => "index_repos_on_issues"
+  add_index "repos", ["language"], :name => "index_repos_on_language"
   add_index "repos", ["name"], :name => "index_repos_on_name"
   add_index "repos", ["owner"], :name => "index_repos_on_owner"
+  add_index "repos", ["stars"], :name => "index_repos_on_stars"
 
   create_table "todo_files", :force => true do |t|
     t.integer  "repo_id"
@@ -41,6 +49,7 @@ ActiveRecord::Schema.define(:version => 20120812205953) do
   end
 
   add_index "todo_files", ["repo_id"], :name => "index_todo_files_on_repo_id"
+  add_index "todo_files", ["sha"], :name => "index_todo_files_on_sha"
 
   create_table "todo_lines", :force => true do |t|
     t.integer  "todo_file_id"

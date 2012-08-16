@@ -1,17 +1,71 @@
 <script>
   $('#terminal').terminal(function(command, term) {
-    var userInput = (command.split(" "));
-    if (userInput[0] == 'goto') {
-      term.echo("going to ".concat(userInput[1]));
+    var userInput = command.split(" ");
+    var userCommand = userInput[0].toLowerCase();
+    var userArgs = userInput.slice(1);
+    var argsStr = userArgs.join(" ");
+
+    var commands = function() {
+      term.echo("these are the commands")
+    };
+    var about = function() {
+      term.echo("[[uib;#000;#00ee11]chickens!]")
+    }
+    var showRepo = function() {
       $.pjax({
-        url: "/".concat(userInput[1]),
+        url: "/".concat(userArgs),
+        container: '.data-pjax-container',
+        success: function() { term.echo("Showing: ".concat(argsStr))},
+        error: function() {
+          term.echo("error")
+        }
+      })
+    };
+    var searchRepos = function() {
+      term.echo("Searching for repos where: ".concat(argsStr));
+      $.pjax({
+        url: "/",
+        container: '.data-pjax-container',
+        data: { search: argsStr },
+      })
+    };
+    var index = function() {
+      term.echo("Home sweet home");
+      $.pjax({
+        url: "/",
         container: '.data-pjax-container'
       })
+    };
+    var roulette = function() {
+      term.echo("Repo Roulette!");
+      $.pjax({
+        url: "/roulette",
+        container: '.data-pjax-container'
+      })
+    };
+    var help = function() {
+      term.echo("this is the help message")
+    };
+    if (userCommand === 'show') {
+      showRepo()
+    } else if (userCommand === "search") {
+      searchRepos()
+    } else if (userCommand === "home") {
+      index()
+    } else if (userCommand === "about") {
+      about()
+    } else if (userCommand === "commands") {
+      commands()
+    } else if (userCommand === "roulette") {
+      roulette()
+    } else if (userCommand === "help") {
+      help()
     } else {
-      term.echo('unknown command');
+      term.echo("Unknown command. Enter 'commands' for information.");
     }
   }, { 
-    greetings: "Welcome to Git Party",
-    prompt: '>' 
+    prompt: '>',
+    greetings: "Welcome to Git Party\n this is a placeholder"
   });
+  $(document).on('pjax:error', function() { return false});
 </script>

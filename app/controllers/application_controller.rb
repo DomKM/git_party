@@ -2,6 +2,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   layout :set_layout
 
+  def pjax?
+  	return true if request.headers['X-PJAX']
+  end
+
 	private
 
 	def set_layout
