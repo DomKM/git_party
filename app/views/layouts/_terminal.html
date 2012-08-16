@@ -30,6 +30,7 @@
       $.pjax({
         url: opts.path,
         container: '.data-pjax-container',
+        timeout: 10000,
         data: opts.dataObj,
         success: function() { term.echo(opts.successMessage) },
         error: function() { term.error(opts.errorMessage) }
