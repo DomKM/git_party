@@ -26,8 +26,8 @@ body {
 }
 
 .container {
-  width: 1600px;
-  @include box-shadow(#111 1px 1px 12px, #111 -1px -1px 12px)
+  width: 1200px;
+  @include box-shadow(#111 1px 1px 12px, #111 -1px -1px 12px);
 }
 
 .span6 {
@@ -120,6 +120,6 @@ td {
 }
 
 /* Large desktop */
-@media (min-width: 1200px) {
-  .container { width: 1200; }
+@media (min-width: 1201px) {
+  .container { width: 1600; }
 }
