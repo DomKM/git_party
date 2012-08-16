@@ -3,7 +3,6 @@ class Repo < ActiveRecord::Base
   validates_presence_of :name, :owner
   has_many :todo_files, dependent: :destroy
   has_many :todo_lines, through: :todo_files
-  # before_create :update!
 
   def real?
     begin
@@ -36,7 +35,7 @@ class Repo < ActiveRecord::Base
     update_info!
   end
 
-  # private
+  private
 
   def rate_remaining
     response = json_get("rate_limit")
