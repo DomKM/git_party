@@ -1,0 +1,26 @@
+<div class='title'>Top Repos</div>
+
+<table>
+  <tr>
+    <th><div class = 'tabletitle'>Owner/Repo</div> </th>
+    <th><div class = 'tabletitle'>Todo#</div> </th>
+    <th><div class = 'tabletitle'>Language</div> </th>
+  </tr>
+
+  <div class="search-empty">
+    <% if @repos.empty? %>
+      <p>No repos match your query.</p>
+    <% end %>
+  </div>
+
+  <% @repos.each do |repo| %>
+    <tr>
+      <td><div class = 'tablename'>
+          <%= "#{repo.owner}/#{repo.name}" %></div></td>
+      <td><div class = 'tablecount'>
+          <%= "#{repo.todo_lines.count}" %></div></td>
+      <td><div class = 'tablela'>
+          <%= "#{repo.language}" %></div></td>
+    </tr>
+  <% end %>
+</table>
