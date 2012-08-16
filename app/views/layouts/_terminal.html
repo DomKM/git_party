@@ -4,22 +4,29 @@
     var userCommand = userInput[0].toLowerCase();
     var userArgs = userInput.slice(1);
     var argsStr = userArgs.join(" ");
+
+    var commands = function() {
+      term.echo("these are the commands")
+    };
+    var about = function() {
+      term.echo("[[uib;#000;#00ee11]chickens!]")
+    }
     var showRepo = function() {
-      term.echo("Showing: ".concat(argsStr));
       $.pjax({
         url: "/".concat(userArgs),
-        container: '.data-pjax-container'
+        container: '.data-pjax-container',
+        success: function() { term.echo("Showing: ".concat(argsStr))},
+        error: function() {
+          term.echo("error")
+        }
       })
     };
     var searchRepos = function() {
-      term.echo("Searching for repos: ".concat(argsStr));
+      term.echo("Searching for repos where: ".concat(argsStr));
       $.pjax({
         url: "/",
         container: '.data-pjax-container',
         data: { search: argsStr },
-        error: function() {
-          term.echo(String.concat(userArgs, " not found. Type 'help' for more information."))
-        }
       })
     };
     var index = function() {
@@ -30,7 +37,7 @@
       })
     };
     var roulette = function() {
-      term.echo("Git Roulette!");
+      term.echo("Repo Roulette!");
       $.pjax({
         url: "/roulette",
         container: '.data-pjax-container'
@@ -39,26 +46,26 @@
     var help = function() {
       term.echo("this is the help message")
     };
-    var about = function() {
-      term.echo("this is the about message")
-    };
     if (userCommand === 'show') {
       showRepo()
     } else if (userCommand === "search") {
       searchRepos()
     } else if (userCommand === "home") {
       index()
-    } else if (userCommand === "help") {
-      help()
     } else if (userCommand === "about") {
       about()
+    } else if (userCommand === "commands") {
+      commands()
     } else if (userCommand === "roulette") {
       roulette()
+    } else if (userCommand === "help") {
+      help()
     } else {
-      term.echo("Unknown command. Enter 'help' for information.");
+      term.echo("Unknown command. Enter 'commands' for information.");
     }
   }, { 
     prompt: '>',
     greetings: "Welcome to Git Party\n this is a placeholder"
   });
+  $(document).on('pjax:error', function() { return false});
 </script>

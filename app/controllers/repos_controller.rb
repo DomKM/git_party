@@ -1,51 +1,57 @@
 class ReposController < ApplicationController
-  respond_to :json, :html
 
   def index
-    if params[:search]
-      @repos = search(params[:search])
-    else
-      @repos = Repo.order{[stars.asc,forks.asc]}.to_a
+    exceptions = [SyntaxError, PG::Error, ActiveRecord::StatementInvalid]
+    begin
+      if params[:search]
+        @repos = search(params[:search])
+      else
+        @repos = Repo.order{[stars.asc,forks.asc]}.to_a
+      end
+    rescue *exceptions
+      head_or_redirect(400)
     end
 
-    #render status: 400 #400 is bad_request
+    #TODO return error to be handled by client if search returns 0 results
+  
   end
 
   def show
-    @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
-    # respond_with(@repo) do |format|
-    #   format.html { render action: 'index'}
-    #   format.js
-
-    # end
-    render layout: false, status: 404
-    # render nothing: true, :status => 404
-      # if params[:owner] && params[:name]
-      #   @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
-      # else
-      #   @repo = Repo.all.sample
-      # end
-    # if Repo.exists?(owner: params[:owner], name: params[:name])
-      # @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
-    # else
-      # render status: 404
-    # end
+    if params[:roulette]
+      @repo = Repo.all.sample
+    else
+      @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
+    end
+    head_or_redirect(404) unless @repo
   end
 
   private
 
+  def head_or_redirect(status)
+    # BUGBUG I get a tASSOC error when putting these two 'pjax?' lines in a 1-line ternary 
+    head :status => status if pjax?
+    redirect_to root_path if !pjax?
+  end
+
   def search(str)
-    gsub_string!(str)
-    match = /order/.match(str)
-    w = match.pre_match.strip || str
-    o = match.post_match.strip || "[stars.asc, forks.asc]"
+
+    #TODO add default search (all repos) so user can only pass an order
+    
+    gsub_string!(str).match(/order/)
+    w = match_string(str, :pre_match) || str
+    o = match_string(str, :post_match) || "[stars.asc, forks.asc]"
     eval("Repo.where{#{w}}.order{#{o}}.to_a")
+  end
+
+  def match_string(string, method)
+    string.method(method).call.strip if $~
   end
 
   def gsub_string!(str)
     str.gsub!("created_at", "github_created_at")
     str.gsub!("updated_at", "github_updated_at")
     str.gsub!("todos", "todo_lines")
+    str
   end
 
 end
