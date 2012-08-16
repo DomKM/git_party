@@ -6,19 +6,24 @@ desc "This task is called by the Heroku scheduler add-on"
 # Rake task will fail if tree branch is not master
 # Need to fix api method logic
 
-task :update_repo => :environment do
+task :update_repos => :environment do
   Repo.all.each do  |r|
     puts "Updating (ID #{r.id}) #{r.owner}/#{r.name}..."
-    if r.updatable?
-      if r.updated?
-        r.update!
-        puts "Update complete!"
+    begin
+      if r.updatable?
+        if r.updated?
+          r.update!
+          puts "Update complete!"
+        else
+          puts "Already up-to-date!"
+        end
       else
-        puts "Already up-to-date!"
+        next
+        puts "Oops! We're over our rate limit!"
       end
-    else
+    rescue
+      puts "Aw man...they don't use a master branch."
       next
-      puts "Oops! We're over our rate limit!"
     end
   end
 
