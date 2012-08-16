@@ -3,6 +3,7 @@ class Repo < ActiveRecord::Base
   validates_presence_of :name, :owner
   has_many :todo_files, dependent: :destroy
   has_many :todo_lines, through: :todo_files
+  # before_create :update!
 
   def real?
     begin
@@ -115,10 +116,6 @@ class Repo < ActiveRecord::Base
     value.match(/\.\w+/i)
   end
 
-  def json(string)
-    JSON.parse(string, :symbolize_names => true)
-  end
-
   def http_get(path, opts = {})
     query = "?client_id=#{ ENV['GITHUB_ID'] }&client_secret=#{ ENV['GITHUB_SECRET_TOKEN'] }"
     url = "https://api.github.com/" + path + query
@@ -127,6 +124,6 @@ class Repo < ActiveRecord::Base
 
   def json_get(path, opts = {})
     response = http_get(path, opts)
-    json(response)
+    JSON.parse(response, :symbolize_names => true)
   end
 end
