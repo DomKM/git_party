@@ -1,0 +1,98 @@
+<style>
+.title {
+  font-family: monospace;
+  color: #d33682;
+  font-size: 55px;
+}
+.infobox {
+	width:310px;
+  padding:5px;
+  border:1px dashed;
+  margin:0px;
+}
+
+.lable {
+	font-family: monospace;
+  color: solid gray;
+  font-size: 16px;
+  color: #b58900;
+}
+
+.box {
+  width:310px;
+  padding:5px;
+  border:1px solid gray;
+  margin:0px;
+}
+
+.connection {
+	font-family: monospace;
+  color: black;
+  font-size: 16px;
+}
+
+.tablefild {
+  font-family: monospace;
+  color: #859900;
+  font-size: 16px;
+}
+
+.highlight {
+  font-family: monospace;
+  color: #268bd2;
+  font-size: 16px;
+}
+</style>
+
+
+<div class ='title'>
+  <%= "#{@repo.owner}/#{@repo.name}" %>
+</div> <br><br><br><br>
+<div class='infobox'>
+	<div class ='lable'>
+    Clone the repo
+  </div>
+  somthing@github.com??</div><br><br>
+<div class ='infobox'>
+	<div class ='lable'>
+    Info
+  </div>
+	<table>
+		<tr>
+			<td><div class ='tablefild'>Forks</td>
+			<td>:</div></td>
+			<td><%= "#{@repo.forks}" %></td>
+		</tr>
+		<tr>
+			<td><div class ='tablefild'>★</td>
+			<td>:</div></td>
+			<td><%= "#{@repo.stars}" %></td>
+		</tr>
+		<tr>
+			<td><div class ='tablefild'>Language</td>
+			<td>:</div></td>
+			<td><div class ='highlight'><%= "#{@repo.language}" %></div></td>
+		</tr>
+		<tr>
+			<td><div class ='tablefild'>Created at</td>
+			<td>:</div></td>
+			<td><%= "#{@repo.github_created_at}" %></td>
+		</tr>
+		<tr>
+			<td><div class ='tablefild'>Updated at</td>
+			<td>:</div></td>
+			<td><%= "#{@repo.github_updated_at}" %></td>
+		</tr>
+		<tr>
+			<td><div class ='tablefild'>Description</td>
+			<td>:</div></td>
+			<td><%= "#{@repo.description}" %></td>
+		</tr>
+	</table>
+</div><br><br>
+<div class ='lable'>Todos</div><p>
+<% @todos = @repo.todo_files.each do |todo| %>
+	<div class ='todos'>
+	  <div class='box'><%=todo.content%></div>
+	</div> <p>
+<% end %>

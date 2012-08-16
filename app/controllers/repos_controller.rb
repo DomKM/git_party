@@ -12,8 +12,15 @@ class ReposController < ApplicationController
       head_or_redirect(400)
     end
 
+<<<<<<< HEAD
     #TODO return error to be handled by client if search returns 0 results
   
+=======
+  def show
+    @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
+    # respond_with @repo
+    # @todos = self.Todo_files
+>>>>>>> design
   end
 
   def show

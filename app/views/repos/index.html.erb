@@ -1,0 +1,53 @@
+<style>
+.title {
+  color : #cb4b16;
+}
+.data-pjax-container .tabletitle{
+	color: #b58900;
+	text-align: center;
+}
+.data-pjax-container .tablename{
+	color: #268bd2;
+	font-size: 16px;
+}
+.data-pjax-container .tablecount{
+	color: #859900;
+	text-align: center;
+	font-size: 16px;
+}
+.data-pjax-container .tablela{
+	color: #d33682;
+	text-align: center;
+	font-size: 16px;
+}
+th {
+	height:30px;
+}
+td {
+	height:20px;
+}
+
+</style>
+
+<div class = 'title'>
+<h1>Top Repos</h1>
+</div>
+<div calss = 'data-pjax-container'>
+<table>
+  <tr>
+    <th><div class = 'tabletitle'>Owner/Repo</div> </th>
+    <th><div class = 'tabletitle'>Todo#</div> </th>
+    <th><div class = 'tabletitle'>Language</div> </th>	   
+  </tr> 
+<% @repos.each do |repo| %>
+  <tr>
+    <td><div class = 'tablename'>
+    	<%= "#{repo.owner}/#{repo.name}" %></div></td>
+    <td><div class = 'tablecount'>
+    	<%= "#{repo.todo_lines.count}" %></div></td>
+    <td><div class = 'tablela'>
+    	<%= "#{repo.language}" %></div></td>
+  </tr>
+<% end %>
+</table>
+ </div>
