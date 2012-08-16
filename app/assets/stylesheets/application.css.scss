@@ -11,3 +11,19 @@
  *= require_self
  *= require_tree .
 */
+.data-pjax-container {
+width:100%;
+height:100%;
+overflow:auto;
+resize:both;
+} 
+#terminal {
+width:100%;
+height:100%;
+overflow:auto;
+resize:both;
+} 
+body {
+overflow:hidden;
+resize:both;
+} 

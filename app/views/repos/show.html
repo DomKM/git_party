@@ -1,0 +1,27 @@
+<div id ='output'>
+  <div class ='title'>
+  <h1><%= "#{@repo.owner}/#{@repo.name}" %></h1>
+</div> 
+<table>
+	<tr>
+	<div class ='info'>
+	<td>Watchers :</td>
+	<td>#{@repo.wachers}</td>
+	</div>
+	</tr>
+	<tr>
+	<td>Language :</td>
+	<td>#{@repo.path}</td>
+	</tr>
+	<tr>
+	<td>updated at :</td>
+	<td>#{@repo.updated_at}</td>
+	</tr>
+</table><p>
+<div class ='todos'>
+	<%= %>
+  <div class='todo'>todo w line numbers</div>
+</div>
+<div class ='connection'>
+  clone the repo
+</div>

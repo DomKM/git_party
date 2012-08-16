@@ -252,6 +252,7 @@ DEPENDENCIES
   jazz_hands
   jquery-rails
   json
+  nokogiri
   pg (>= 0.14.0)
   pjax_rails
   rails (= 3.2.7)
