@@ -4,13 +4,12 @@
     var userCommand = userInput[0].toLowerCase();
     var userArgs = userInput.slice(1);
     var argsStr = userArgs.join(" ");
-
     var commands = function() {
       term.echo("these are the commands")
     };
     var about = function() {
       term.echo("[[uib;#000;#00ee11]chickens!]")
-    }
+    };
     var showRepo = function() {
       $.pjax({
         url: "/".concat(userArgs),
@@ -67,5 +66,5 @@
     prompt: '>',
     greetings: "Welcome to Git Party\n this is a placeholder"
   });
-  $(document).on('pjax:error', function() { return false});
+  // $(document).on('pjax:error', function() { return false});
 </script>

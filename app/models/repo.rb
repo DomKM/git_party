@@ -52,6 +52,7 @@ class Repo < ActiveRecord::Base
     self.forks = info[:forks]
     self.stars = info[:watchers]
     self.issues = info[:open_issues]
+    self.todos = self.todo_lines.length
     self.save
   end
 

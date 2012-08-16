@@ -23,6 +23,7 @@ group :development, :test do
     gem 'guard-rspec'
     gem 'guard-spin'
     gem 'fakeweb'
+    gem 'jazz_hands'
 end
 
 group :production do
