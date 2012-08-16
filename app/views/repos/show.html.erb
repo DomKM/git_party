@@ -5,7 +5,7 @@
   font-size: 55px;
 }
 .infobox {
-	width:310px;
+	width:370px;
   padding:5px;
   border:1px dashed;
   margin:0px;
@@ -19,7 +19,7 @@
 }
 
 .box {
-  width:310px;
+  width:370px;
   padding:5px;
   border:1px solid gray;
   margin:0px;
@@ -48,51 +48,68 @@
 <div class ='title'>
   <%= "#{@repo.owner}/#{@repo.name}" %>
 </div> <br><br><br><br>
-<div class='infobox'>
-	<div class ='lable'>
-    Clone the repo
-  </div>
-  somthing@github.com??</div><br><br>
-<div class ='infobox'>
-	<div class ='lable'>
-    Info
-  </div>
-	<table>
-		<tr>
-			<td><div class ='tablefild'>Forks</td>
-			<td>:</div></td>
-			<td><%= "#{@repo.forks}" %></td>
-		</tr>
-		<tr>
-			<td><div class ='tablefild'>★</td>
-			<td>:</div></td>
-			<td><%= "#{@repo.stars}" %></td>
-		</tr>
-		<tr>
-			<td><div class ='tablefild'>Language</td>
-			<td>:</div></td>
-			<td><div class ='highlight'><%= "#{@repo.language}" %></div></td>
-		</tr>
-		<tr>
-			<td><div class ='tablefild'>Created at</td>
-			<td>:</div></td>
-			<td><%= "#{@repo.github_created_at}" %></td>
-		</tr>
-		<tr>
-			<td><div class ='tablefild'>Updated at</td>
-			<td>:</div></td>
-			<td><%= "#{@repo.github_updated_at}" %></td>
-		</tr>
-		<tr>
-			<td><div class ='tablefild'>Description</td>
-			<td>:</div></td>
-			<td><%= "#{@repo.description}" %></td>
-		</tr>
-	</table>
-</div><br><br>
-<div class ='lable'>Todos</div><p>
-<% @todos = @repo.todo_files.each do |todo| %>
-	<div class ='todos'>
-	  <div class='box'><%=todo.content%></div>
-	</div> <p>
-<% end %>
+	<div class='infobox'>
+	  <div class ='lable'>
+	    Clone the repo
+	  </div>
+	  somthing@github.com??<br>
+	</div>
+		<%if @repo.homepage %>
+			<div class='infobox'>
+				<div class ='lable'>
+			    Homepage
+			  </div>
+			  <%= @repo.homepage %>
+			</div>
+		<% end %><br>
+		<%if @repo.description %>
+		  <div class='infobox'>
+			  <div class ='lable'>
+		      Description
+		    </div>
+		    <%= @repo.description %>
+		  </div>
+		<% end %><br>
+	<div class ='infobox'>
+		<div class ='lable'>
+	    Info
+	  </div>
+			<table>
+				<tr>
+					<td><div class ='tablefild'>Language</td>
+					<td>:</div></td>
+					<td><div class ='highlight'><%= "#{@repo.language}" %></div></td>
+				</tr>			
+				<tr>
+					<td><div class ='tablefild'>Forks</td>
+					<td>:</div></td>
+					<td><%= "#{@repo.forks}" %></td>
+				</tr>
+				<tr>
+					<td><div class ='tablefild'>★</td>
+					<td>:</div></td>
+					<td><%= "#{@repo.stars}" %></td>
+				</tr>
+				<tr>
+					<td><div class ='tablefild'>Issues</td>
+					<td>:</div></td>
+					<td><%= "#{@repo.issues}" %></td>
+				</tr>			
+				<tr>
+					<td><div class ='tablefild'>Created at</td>
+					<td>:</div></td>
+					<td><%= "#{@repo.github_created_at}" %></td>
+				</tr>
+				<tr>
+					<td><div class ='tablefild'>Updated at</td>
+					<td>:</div></td>
+					<td><%= "#{@repo.github_updated_at}" %></td>
+				</tr>
+			</table>
+	</div><br><br>
+		<div class ='lable'>Todos</div><p>
+			<% @todos = @repo.todo_files.each do |todo| %>
+				<div class ='todos'>
+				  <div class='box'><%=todo.content%></div>
+				</div><p>
+			<% end %>
