@@ -7,6 +7,7 @@ class ReposController < ApplicationController
   def show
     @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
     # respond_with @repo
+    # @todos = self.Todo_files
   end
 
   def create
