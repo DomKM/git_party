@@ -59,6 +59,8 @@ class Repo < ActiveRecord::Base
     @info = json_get("repos/#{owner}/#{name}")
   end
 
+  # Will fail if there is no master branch
+  #
   def tree
     return @tree if @tree
     path = "repos/#{owner}/#{name}/git/trees/master"
