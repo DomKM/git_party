@@ -1,4 +1,9 @@
 <script>
+  $(function(){
+    setInterval(function(){
+      $("#terminal").parent().animate({ scrollTop: 500000 });
+    }, 200);
+  });
   $('#terminal').terminal(function(command, term) {
     var userInput = command.split(" ");
     var userCommand = userInput[0].toLowerCase();
@@ -20,7 +25,7 @@
     var helpHelpEcho = "Seriously?";
     var pjaxify = function(opts) {
       // var xhrStatus = "bloop";
-      $(document).on('pjax:error', function(e, xhr, err) { 
+      $(document).on('pjax:error', function(e, xhr, err) {
         // xhrStatus = xhr.status;
         return false
       });
@@ -43,7 +48,7 @@
       if (/.+\/.+/.test(userArgs[0]) === true) {
         pjaxify({
           path: "/".concat(userArgs),
-          successMessage: "Showing: ".concat(argsStr), 
+          successMessage: "Showing: ".concat(argsStr),
           errorMessage: "Invalid repo. Enter 'commands' for more information."
         })
       } else {
