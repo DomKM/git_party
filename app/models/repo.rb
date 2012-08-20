@@ -1,8 +1,8 @@
 class Repo < ActiveRecord::Base
   attr_accessible :owner, :name
   validates_presence_of :name, :owner
-  has_many :todo_files, dependent: :destroy
-  has_many :todo_lines, through: :todo_files
+  has_many :shas, dependent: :destroy
+  has_many :todos, through: :shas
 
   def real?
     begin
@@ -52,7 +52,7 @@ class Repo < ActiveRecord::Base
     self.stars = info[:watchers]
     self.issues = info[:open_issues]
     self.git_url = info[:git_url]
-    self.todos = self.todo_lines.length
+    self.todos = self.todos.length
     self.save
   end
 
@@ -123,14 +123,5 @@ class Repo < ActiveRecord::Base
     value.match(/\.\w+/i)
   end
 
-  def http_get(path, opts = {})
-    query = "?client_id=#{ ENV['GITHUB_ID'] }&client_secret=#{ ENV['GITHUB_SECRET_TOKEN'] }"
-    url = "https://api.github.com/" + path + query
-    RestClient.get(url, opts)
-  end
 
-  def json_get(path, opts = {})
-    response = http_get(path, opts)
-    JSON.parse(response, :symbolize_names => true)
-  end
 end
