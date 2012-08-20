@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120816063424) do
+ActiveRecord::Schema.define(:version => 20120820202038) do
 
   create_table "repos", :force => true do |t|
     t.string   "name"
@@ -42,25 +42,28 @@ ActiveRecord::Schema.define(:version => 20120816063424) do
   add_index "repos", ["stars"], :name => "index_repos_on_stars"
   add_index "repos", ["todos"], :name => "index_repos_on_todos"
 
-  create_table "todo_files", :force => true do |t|
+  create_table "shas", :force => true do |t|
     t.integer  "repo_id"
     t.string   "sha"
     t.string   "path"
+    t.text     "content"
+    t.string   "type"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  add_index "shas", ["repo_id"], :name => "index_shas_on_repo_id"
+  add_index "shas", ["sha"], :name => "index_shas_on_sha"
+  add_index "shas", ["type"], :name => "index_shas_on_type"
+
+  create_table "todos", :force => true do |t|
+    t.integer  "sha_id"
+    t.integer  "line"
     t.text     "content"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
-  add_index "todo_files", ["repo_id"], :name => "index_todo_files_on_repo_id"
-  add_index "todo_files", ["sha"], :name => "index_todo_files_on_sha"
-
-  create_table "todo_lines", :force => true do |t|
-    t.integer  "todo_file_id"
-    t.integer  "line_num"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
-  end
-
-  add_index "todo_lines", ["todo_file_id"], :name => "index_todo_lines_on_todo_file_id"
+  add_index "todos", ["sha_id"], :name => "index_todos_on_sha_id"
 
 end

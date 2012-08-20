@@ -35,7 +35,7 @@ class Repo < ActiveRecord::Base
     update_info!
   end
 
-  private
+
 
   def rate_remaining
     response = json_get("rate_limit")
