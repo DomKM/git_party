@@ -11,6 +11,8 @@ class Sha < ActiveRecord::Base
   	todos.length > 0
   end
 
+  private
+
   def add_content
   	return unless file? && extension?
   	self.content = Github::API.http_get("repos/#{repo.owner}/#{repo.name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")

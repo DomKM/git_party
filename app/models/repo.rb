@@ -6,6 +6,9 @@ class Repo < ActiveRecord::Base
   has_many :todos, through: :shas
   before_create :update_info
 
+  def self.top
+    Repo.
+  end
 
   def update!
     return unless updated? && updatable?
@@ -18,9 +21,6 @@ class Repo < ActiveRecord::Base
     todos.length > 0
   end
 
-  def num_of_todos
-    todos.length
-  end
 
   def shas_with_todos
     shas.select { |sha| sha.todos? }
@@ -59,6 +59,7 @@ class Repo < ActiveRecord::Base
     self.issues = info[:open_issues]
     self.git_url = info[:git_url]
     self.master_branch = info[:master_branch]
+    self.todos_sum = todos.length
   end
 
   def files

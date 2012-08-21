@@ -4,7 +4,6 @@ class Todo < ActiveRecord::Base
   belongs_to :repo
   validates_presence_of :line, :sha
 
-
   def self.include?(opts)
   	comment = self.comment_syntax(opts[:filetype])
   	opts[:string].match(/#{comment}(.*(todo|bugbug).*$)/i)
