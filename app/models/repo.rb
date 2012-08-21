@@ -1,48 +1,54 @@
 class Repo < ActiveRecord::Base
+  require 'set'
   attr_accessible :owner, :name
   validates_presence_of :name, :owner
   has_many :shas, dependent: :destroy
   has_many :todos, through: :shas
+  before_create :update_info
 
-  def real?
-    begin
-      http_get("repos/#{owner}/#{name}")
-    rescue RestClient::ResourceNotFound
-      false
-    end
+
+  def update!
+    return unless updated? && updatable?
+    modify_shas
+    update_info
+    save
   end
 
+  def todos?
+    todos.length > 0
+  end
+
+  def num_of_todos
+    todos.length
+  end
+
+  def shas_with_todos
+    shas.select { |sha| sha.todos? }
+  end
+
+  # TODO This method will be used when we allow users to submit their own repos.
+  # def real?
+  #   begin
+  #     Github::API.http_get("repos/#{owner}/#{name}")
+  #   rescue RestClient::ResourceNotFound
+  #     false
+  #   end
+  # end
+
   def updated?
+    return true if created_at == updated_at
     begin
-      http_get("repos/#{owner}/#{name}", "If-Modified-Since" => "#{updated_at.httpdate}")
+      Github::API.http_get("repos/#{owner}/#{name}", "If-Modified-Since" => "#{github_updated_at.httpdate}")
     rescue RestClient::NotModified
       false
     end
   end
 
   def updatable?
-    tree.length + 100 < rate_remaining # '+100' is to be safe
+    (new_shas - old_shas).length + 100 < Github::API.rate_remaining 
   end
 
-  def update!
-    TodoFile.destroy_all(repo_id: id)
-    todos.each_value do |todo|
-      t = todo_files.create(todo.reject { |k, v| k == :lines })
-      todo[:lines].each do |line|
-        t.todo_lines.create( line_num: line )
-      end
-    end
-    update_info!
-  end
-
-
-
-  def rate_remaining
-    response = json_get("rate_limit")
-    response[:rate][:remaining]
-  end
-
-  def update_info!
+  def update_info
     self.github_created_at = info[:created_at]
     self.github_updated_at = info[:updated_at]
     self.homepage = info[:homepage]
@@ -52,76 +58,61 @@ class Repo < ActiveRecord::Base
     self.stars = info[:watchers]
     self.issues = info[:open_issues]
     self.git_url = info[:git_url]
-    self.todos = self.todos.length
-    self.save
+    self.master_branch = info[:master_branch]
+  end
+
+  def files
+    self.shas.select { |sha| sha.type == "blob" }
   end
 
   def info
     return @info if @info
-    @info = json_get("repos/#{owner}/#{name}")
+    @info = Github::API.json_get("repos/#{owner}/#{name}")
   end
 
-  # Will fail if there is no master branch
-  #
   def tree
     return @tree if @tree
-    path = "repos/#{owner}/#{name}/git/trees/master"
-    response = json_get(path, :params => {:recursive => true} )
+    path = "repos/#{owner}/#{name}/git/trees/#{master_branch}"
+    response = Github::API.json_get(path, params: {recursive: true})
     @tree = response[:tree]
   end
 
-  def todos # Formerly 'files'
-    return @todos if @todos
-    @todos = {}
-    tree.find_all { |f| f[:type] == "blob" }.each do |file|
-      if extension?(file[:path]) # Makes sure that there is a file extension
-        filetype = parse_file_ext(file[:path])
-        if any_todos?( content(file[:sha]), comment_syntax(filetype) )
-          @todos[file[:sha]] = { path: file[:path], sha: file[:sha], lines: lines(filetype), content: @content }
-        end
+  def modify_shas
+    destroy_shas
+    create_shas
+  end
+
+  def current_shas
+    return @current_shas if @current_shas
+    @current_shas = Set.new
+    self.shas.each { |s| current_shas << s[:sha] }
+    @current_shas
+  end
+
+  def new_shas
+    return @new_shas if @new_shas
+    @new_shas = Set.new
+    tree.each { |s| new_shas << s[:sha] }
+    @new_shas
+  end
+
+  def old_shas
+    return @old_shas if @old_shas
+    @old_shas = current_shas & new_shas
+  end
+
+  def create_shas
+    to_be_created = new_shas - old_shas
+    to_be_created.each do |sha_string| 
+      tree.each do |tree_sha|
+        shas.create(sha: tree_sha[:sha], path: tree_sha[:path], type: tree_sha[:type]) if tree_sha[:sha] == sha_string
       end
     end
-    @todos
   end
 
-  def content(sha)
-    @content = http_get("repos/#{owner}/#{name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
+  def destroy_shas
+    to_be_destroyed = current_shas - old_shas
+    to_be_destroyed.each { |sha| sha.destroy }
   end
-
-  def lines(filetype)
-    line_arr = []
-    @content.split(%r{\n}).each_with_index do |line, index|
-      line_arr << index + 1 if any_todos?(line, comment_syntax(filetype))
-    end
-    line_arr
-  end
-
-  def comment_syntax(filetype) # This should probably go in another file?
-    case filetype
-    when "rb" || "py" || "pl" || "pm" ||"php"
-      "#"
-    when "js" || "cpp" || "cxx" || "c" || "java" || "m"
-      Regexp.escape "//"
-    when "html"
-      Regexp.escape "<!--"
-    end
-  end
-
-  #There are so many things wrong with this regexp.
-  #1. It doesn't catch everything in the comments
-  #2. It captures 'debug' when we want just 'bug'
-
-  def any_todos?(text, comment)
-    !text.scan(/#{comment}(.*(todo|bugbug).*$)/i).flatten.empty?
-  end
-
-  def parse_file_ext(value)
-    value.match(/\.\w+/i)[0][1..-1]  # Returns first instance of everything after the first dot
-  end
-
-  def extension?(value)
-    value.match(/\.\w+/i)
-  end
-
 
 end

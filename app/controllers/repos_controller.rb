@@ -31,6 +31,7 @@ class ReposController < ApplicationController
   end
 
   def search(str)
+    # TODO This is very insecure. It needs to be fixed.
     gsub_github!(str).match(/order/)
     where = $~ ? $` : str
     order = $~ ? $' : "[stars.asc, forks.asc]"
