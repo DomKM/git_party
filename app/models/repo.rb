@@ -59,6 +59,7 @@ class Repo < ActiveRecord::Base
     self.issues = info[:open_issues]
     self.git_url = info[:git_url]
     self.master_branch = info[:master_branch]
+    self.owner_name = self.owner_name.downcase!
   end
 
   def files
@@ -67,12 +68,12 @@ class Repo < ActiveRecord::Base
 
   def info
     return @info if @info
-    @info = Github::API.json_get("repos/#{owner}/#{name}")
+    @info = Github::API.json_get("repos/#{owner_name}")
   end
 
   def tree
     return @tree if @tree
-    path = "repos/#{owner}/#{name}/git/trees/#{master_branch}"
+    path = "repos/#{owner_name}/git/trees/#{master_branch}"
     response = Github::API.json_get(path, params: {recursive: true})
     @tree = response[:tree]
   end

@@ -67,7 +67,7 @@ module Github
 
     def repo_data_for_slug(slug)
       slug_array = slug.split('/')
-      { :owner => slug_array[1], :name => slug_array[2] }
+      {owner_name: "#{slug_array[1]}/#{slug_array[2]}"}
     end
   end
 
