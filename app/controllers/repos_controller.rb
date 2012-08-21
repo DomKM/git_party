@@ -6,7 +6,7 @@ class ReposController < ApplicationController
       if params[:search]
         @repos = search(params[:search])
       else
-        @repos = Repo.where{todos > 0}.order{[stars.asc, forks.asc]}.to_a
+        @repos = Repo.top.to_a
         # head(status: 404) if @repos.empty?
         # TODO add client side handling of empty search
       end
@@ -31,6 +31,7 @@ class ReposController < ApplicationController
   end
 
   def search(str)
+    # TODO This is very insecure. It needs to be fixed.
     gsub_github!(str).match(/order/)
     where = $~ ? $` : str
     order = $~ ? $' : "[stars.asc, forks.asc]"

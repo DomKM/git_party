@@ -1,12 +1,25 @@
-# A crawler to fetch the most popular repos from Github.
-# The repos are saved into a set.
+module Github
 
-require 'open-uri'
-require 'cgi'
-require 'set'
+  class API
+    def self.http_get(path, opts = {})
+      query = "?client_id=#{ ENV['GITHUB_ID'] }&client_secret=#{ ENV['GITHUB_SECRET_TOKEN'] }"
+      url = "https://api.github.com/" + path + query
+      RestClient.get(url, opts)
+    end
+    def self.json_get(path, opts = {})
+      response = self.http_get(path, opts)
+      JSON.parse(response, :symbolize_names => true)
+    end
+    def self.rate_remaining
+      response = self.json_get("rate_limit")
+      response[:rate][:remaining]
+    end
+  end
 
-module GHCrawler
   class Crawler
+    require 'open-uri'
+    require 'cgi'
+    require 'set'
 
     attr_accessor :popular_set
 
@@ -54,8 +67,9 @@ module GHCrawler
 
     def repo_data_for_slug(slug)
       slug_array = slug.split('/')
-      { :owner => slug_array[1], :name => slug_array[2] }
+      {owner_name: "#{slug_array[1]}/#{slug_array[2]}"}
     end
-
   end
+
 end
+
