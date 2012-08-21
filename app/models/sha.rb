@@ -7,10 +7,6 @@ class Sha < ActiveRecord::Base
   before_create :add_content
   after_create :create_todos
 
-  def todos?
-  	todos.length > 0
-  end
-
   private
 
   def add_content

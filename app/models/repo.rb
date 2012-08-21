@@ -19,7 +19,7 @@ class Repo < ActiveRecord::Base
   end
 
   def shas_with_todos
-    shas.select { |sha| sha.todos? }
+    shas.select { |sha| sha.todos.count > 0 }
   end
 
   private
