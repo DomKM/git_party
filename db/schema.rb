@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120821011722) do
+ActiveRecord::Schema.define(:version => 20120821215705) do
 
   create_table "repos", :force => true do |t|
     t.string   "name"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(:version => 20120821011722) do
     t.integer  "issues"
     t.string   "git_url"
     t.string   "master_branch"
+    t.string   "owner_name"
   end
 
   add_index "repos", ["description"], :name => "index_repos_on_description"
@@ -39,6 +40,7 @@ ActiveRecord::Schema.define(:version => 20120821011722) do
   add_index "repos", ["language"], :name => "index_repos_on_language"
   add_index "repos", ["name"], :name => "index_repos_on_name"
   add_index "repos", ["owner"], :name => "index_repos_on_owner"
+  add_index "repos", ["owner_name"], :name => "index_repos_on_owner_name", :unique => true
   add_index "repos", ["stars"], :name => "index_repos_on_stars"
 
   create_table "shas", :force => true do |t|

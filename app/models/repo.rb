@@ -1,7 +1,8 @@
 class Repo < ActiveRecord::Base
   require 'set'
-  attr_accessible :owner, :name
-  validates_presence_of :name, :owner
+  attr_accessible :owner_name
+  validates_presence_of :owner_name
+  validates_uniqueness_of :owner_name
   has_many :shas, dependent: :destroy
   has_many :todos, through: :shas
   before_create :update_info
@@ -22,7 +23,7 @@ class Repo < ActiveRecord::Base
     shas.select { |sha| sha.todos.count > 0 }
   end
 
-  private
+  # private
   # TODO This method will be used when we allow users to submit their own repos.
   # def real?
   #   begin
@@ -35,7 +36,7 @@ class Repo < ActiveRecord::Base
   def updated?
     return true if created_at == updated_at
     begin
-      Github::API.http_get("repos/#{owner}/#{name}", "If-Modified-Since" => "#{github_updated_at.httpdate}")
+      Github::API.http_get("repos/#{owner_name}", "If-Modified-Since" => "#{github_updated_at.httpdate}")
     rescue RestClient::NotModified
       false
     end
@@ -46,6 +47,8 @@ class Repo < ActiveRecord::Base
   end
 
   def update_info
+    self.name = info[:name]
+    self.owner = info[:owner][:login]
     self.github_created_at = info[:created_at]
     self.github_updated_at = info[:updated_at]
     self.homepage = info[:homepage]
