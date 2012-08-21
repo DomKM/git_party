@@ -64,7 +64,7 @@
 
 <div class ='todos'>
   <div class ='header'>Todos</div>
-  <% @todos = @repo.todo_files.each do |todo| %>
+  <% @todos = @repo.todos.each do |todo| %>
     <div class="single-todo">
       <p><%= todo.path %></p>
       <div class='box'><%= todo.content %></div>

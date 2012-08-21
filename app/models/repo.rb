@@ -56,7 +56,6 @@ class Repo < ActiveRecord::Base
     self.issues = info[:open_issues]
     self.git_url = info[:git_url]
     self.master_branch = info[:master_branch]
-    self.num_of_todos = todos.length
   end
 
   def files
