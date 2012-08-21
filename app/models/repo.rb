@@ -6,8 +6,9 @@ class Repo < ActiveRecord::Base
   has_many :todos, through: :shas
   before_create :update_info
 
-  def self.top
-    Repo.
+
+  def self.top(num = 100)
+    Repo.order("stars + forks DESC").limit(num)
   end
 
   def update!
@@ -17,15 +18,11 @@ class Repo < ActiveRecord::Base
     save
   end
 
-  def todos?
-    todos.length > 0
-  end
-
-
   def shas_with_todos
     shas.select { |sha| sha.todos? }
   end
 
+  private
   # TODO This method will be used when we allow users to submit their own repos.
   # def real?
   #   begin
@@ -59,7 +56,7 @@ class Repo < ActiveRecord::Base
     self.issues = info[:open_issues]
     self.git_url = info[:git_url]
     self.master_branch = info[:master_branch]
-    self.todos_sum = todos.length
+    self.num_of_todos = todos.length
   end
 
   def files
