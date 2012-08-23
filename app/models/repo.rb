@@ -13,7 +13,8 @@ class Repo < ActiveRecord::Base
   end
 
   def update!
-    return unless updated? && updatable?
+    destroy unless real?
+    return unless real? && updated? && updatable?
     modify_shas
     update_info
     save
@@ -23,15 +24,15 @@ class Repo < ActiveRecord::Base
     shas.select { |sha| sha.todos.count > 0 }
   end
 
-  # private
-  # TODO This method will be used when we allow users to submit their own repos.
-  # def real?
-  #   begin
-  #     Github::API.http_get("repos/#{owner}/#{name}")
-  #   rescue RestClient::ResourceNotFound
-  #     false
-  #   end
-  # end
+  private
+
+  def real?
+    begin
+      Github::API.http_get("repos/#{owner}/#{name}")
+    rescue RestClient::ResourceNotFound
+      false
+    end
+  end
 
   def updated?
     return true if created_at == updated_at
@@ -59,7 +60,7 @@ class Repo < ActiveRecord::Base
     self.issues = info[:open_issues]
     self.git_url = info[:git_url]
     self.master_branch = info[:master_branch]
-    self.owner_name = self.owner_name.downcase!
+    owner_name.downcase!
   end
 
   def files
