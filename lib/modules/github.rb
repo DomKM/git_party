@@ -14,6 +14,11 @@ module Github
       response = self.json_get("rate_limit")
       response[:rate][:remaining]
     end
+    def self.valid?(resource)
+      self.http_get(resource)
+    rescue RestClient::ResourceNotFound
+      false
+    end
   end
 
   class Crawler

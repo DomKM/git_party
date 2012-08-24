@@ -7,15 +7,15 @@ desc "This task is called by the Heroku scheduler add-on"
 # Need to fix api method logic
 
 task :update_repos => :environment do
-  Repo.all.each do |r|
-    begin
-      r.update!
-    rescue
-      next
-    end
-  end
+  Repo.all.each do |repo|
+      repo.update!
+  rescue
+		next
+	end
 end
 
-task :crawl_repos => :environment do
-  Github::Crawler.new.crawl_all_pages.each { |repo| Repo.create(repo) }
+task :crawl_github => :environment do
+  Github::Crawler.new.crawl_all_pages.each do |repo| 
+  	Repo.create(repo) if Repo.real?(repo) && !Repo.exists?(repo) 
+  end
 end

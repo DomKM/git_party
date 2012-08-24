@@ -24,24 +24,20 @@ class Repo < ActiveRecord::Base
     shas.select { |sha| sha.todos.count > 0 }
   end
 
-  private
+  def self.real?(opts)
+    Github::API.valid?("repos/#{opts[:owner_name]}")
+  end
 
   def real?
     return @real if @real
-    begin
-      @real = Github::API.http_get("repos/#{owner}/#{name}")
-    rescue RestClient::ResourceNotFound
-      @real = false
-    end
+    @real = Repo.real?(owner_name: owner_name)
   end
 
   def updated?
     return true if created_at == updated_at
-    begin
-      Github::API.http_get("repos/#{owner_name}", "If-Modified-Since" => "#{github_updated_at.httpdate}")
-    rescue RestClient::NotModified
-      false
-    end
+    Github::API.http_get("repos/#{owner_name}", "If-Modified-Since" => "#{github_updated_at.httpdate}")
+  rescue RestClient::NotModified
+    false
   end
 
   def updatable?
