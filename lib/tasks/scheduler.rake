@@ -18,5 +18,4 @@ end
 
 task :crawl_repos => :environment do
   Github::Crawler.new.crawl_all_pages.each { |repo| Repo.create(repo) }
-  puts "** Scraping complete. Repo objects were created successfully **"
 end

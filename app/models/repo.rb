@@ -27,10 +27,11 @@ class Repo < ActiveRecord::Base
   private
 
   def real?
+    return @real if @real
     begin
-      Github::API.http_get("repos/#{owner}/#{name}")
+      @real = Github::API.http_get("repos/#{owner}/#{name}")
     rescue RestClient::ResourceNotFound
-      false
+      @real = false
     end
   end
 
