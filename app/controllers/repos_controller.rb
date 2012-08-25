@@ -16,10 +16,12 @@ class ReposController < ApplicationController
   end
 
   def show
+
+    
     if params[:roulette]
       @repo = Repo.all.sample
     else
-      @repo = Repo.find_by_owner_and_name(params[:owner], params[:name])
+      @repo = Repo.find_by_owner_name("#{params[:owner].downcase}/#{params[:name].downcase}")
     end
     head_or_root(404) unless @repo
   end
