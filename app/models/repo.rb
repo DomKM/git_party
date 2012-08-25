@@ -24,13 +24,13 @@ class Repo < ActiveRecord::Base
     shas.select { |sha| sha.todos.count > 0 }
   end
 
-  def self.real?(opts)
-    Github::API.valid?("repos/#{opts[:owner_name]}")
+  def self.real?(repo)
+    Github::API.valid?("repos/#{repo}")
   end
 
   def real?
     return @real if @real
-    @real = Repo.real?(owner_name: owner_name)
+    @real = Repo.real?(owner_name)
   end
 
   def updated?

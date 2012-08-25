@@ -72,7 +72,7 @@ module Github
 
     def repo_data_for_slug(slug)
       slug_array = slug.split('/')
-      {owner_name: "#{slug_array[1]}/#{slug_array[2]}"}
+      "#{slug_array[1]}/#{slug_array[2]}"
     end
   end
 
