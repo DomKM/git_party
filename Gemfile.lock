@@ -72,6 +72,7 @@ GEM
     diffy (2.0.8)
     erubis (2.7.0)
     eventmachine (0.12.10)
+    excon (0.16.1)
     execjs (1.4.0)
       multi_json (~> 1.0)
     factory_girl (4.0.0)
@@ -102,6 +103,14 @@ GEM
       activesupport (~> 3.0)
       haml (~> 3.0)
       railties (~> 3.0)
+    heroku (2.30.5)
+      heroku-api (~> 0.3.4)
+      launchy (>= 0.3.2)
+      netrc (~> 0.7.7)
+      rest-client (~> 1.6.1)
+      rubyzip
+    heroku-api (0.3.4)
+      excon (~> 0.16.1)
     hike (1.2.1)
     hirb (0.6.2)
     hirefireapp (0.0.8)
@@ -123,6 +132,8 @@ GEM
       railties (>= 3.1.0, < 5.0)
       thor (~> 0.14)
     json (1.7.4)
+    launchy (2.1.2)
+      addressable (~> 2.3)
     libwebsocket (0.1.5)
       addressable
     listen (0.4.7)
@@ -136,6 +147,7 @@ GEM
     method_source (0.8)
     mime-types (1.19)
     multi_json (1.3.6)
+    netrc (0.7.7)
     nokogiri (1.5.5)
     pg (0.14.0)
     pjax_rails (0.3.2)
@@ -221,18 +233,27 @@ GEM
       libwebsocket (~> 0.1.3)
       multi_json (~> 1.0)
       rubyzip
+    sequel (3.20.0)
     shoulda-matchers (1.2.0)
       activesupport (>= 3.0.0)
+    sinatra (1.0)
+      rack (>= 1.0)
     slop (3.3.2)
     spin (0.5.3)
     sprockets (2.1.3)
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
+    sqlite3 (1.3.6)
     squeel (1.0.9)
       activerecord (~> 3.0)
       activesupport (~> 3.0)
       polyamorous (~> 0.5.0)
+    taps (0.3.24)
+      rack (>= 1.0.1)
+      rest-client (>= 1.4.0, < 1.7.0)
+      sequel (~> 3.20.0)
+      sinatra (~> 1.0.0)
     thin (1.4.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
@@ -267,6 +288,7 @@ DEPENDENCIES
   guard-spin
   haml (>= 3.1.6)
   haml-rails (>= 0.3.4)
+  heroku
   hirefireapp
   jazz_hands
   jquery-rails
@@ -280,6 +302,8 @@ DEPENDENCIES
   rspec-rails (>= 2.11.0)
   sass-rails (~> 3.2.3)
   shoulda-matchers
+  sqlite3
   squeel
+  taps
   thin (>= 1.4.1)
   uglifier (>= 1.0.3)
