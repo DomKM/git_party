@@ -1,3 +1,4 @@
+<%= render 'layouts/header' %>
 <div class ='title'>
   <%= "#{@repo.owner}/#{@repo.name}" %>
 </div>
@@ -64,10 +65,13 @@
 
 <div class ='todos'>
   <div class ='header'>Todos</div>
-  <% @todos = @repo.todos.each do |todo| %>
-    <div class="single-todo">
-      <p><%= todo.path %></p>
-      <div class='box'><%= todo.content %></div>
-    </div>
+  <% @todos = @repo.shas_with_todos.each do |sha| %>
+    <% sha.todos.reverse.each do |todo| %>
+      <div class="single-todo">
+        <p><%= sha.path %></p>
+        <p><%= "Line: #{todo.line}" %> </p>
+        <div class='box'><%= todo.content %></div>
+      </div>
+    <% end %>
   <% end %>
 </div>
