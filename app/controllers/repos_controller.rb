@@ -36,13 +36,14 @@ class ReposController < ApplicationController
     # TODO This is very insecure. It needs to be fixed.
     gsub_github!(str).match(/order/)
     where = $~ ? $` : str
-    order = $~ ? $' : "[stars.asc, forks.asc]"
+    order = $~ ? $' : "(stars + forks).desc"
     eval("Repo.where{#{where}}.order{#{order}}.to_a")
   end
 
   def gsub_github!(str)
     str.gsub!("created_at", "github_created_at")
     str.gsub!("updated_at", "github_updated_at")
+    str.gsub!("todos", "todos_count")
     str
   end
 

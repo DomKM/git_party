@@ -9,7 +9,7 @@ class Repo < ActiveRecord::Base
 
 
   def self.top(num = 100)
-    Repo.order("stars + forks DESC").limit(num)
+    Repo.where("todos_count > 0").order("stars + forks DESC").limit(num)
   end
 
   def update!
@@ -57,6 +57,7 @@ class Repo < ActiveRecord::Base
     self.issues = info[:open_issues]
     self.git_url = info[:git_url]
     self.master_branch = info[:master_branch]
+    self.todos_count = todos.count
     owner_name.downcase!
   end
 
