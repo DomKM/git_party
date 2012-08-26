@@ -3,21 +3,32 @@ class Repo < ActiveRecord::Base
   attr_accessible :owner_name
   validates_presence_of :owner_name
   validates_uniqueness_of :owner_name
-  has_many :shas, dependent: :destroy
+  has_many :shas, :issues, dependent: :destroy
   has_many :todos, through: :shas
   before_create :update_info
 
 
   def self.top(num = 100)
-    Repo.where("todos_count > 0").order("stars + forks DESC").limit(num)
+    where("todos_count > 0").order("stars + forks DESC").limit(num)
+  end
+
+  def self.unupdated
+    where("created_at = updated_at")
   end
 
   def update!
     destroy unless real?
-    return unless real? && updated? && updatable?
-    modify_shas
+    return unless destroyed?
+    update_shas
+    update_issues
     update_info
     save
+  end
+
+  def update_if_possible
+    destroy unless real?
+    return unless real? && updated? && updatable?
+    update!
   end
 
   def shas_with_todos
@@ -34,14 +45,13 @@ class Repo < ActiveRecord::Base
   end
 
   def updated?
-    return true if created_at == updated_at
     Github::API.http_get("repos/#{owner_name}", "If-Modified-Since" => "#{github_updated_at.httpdate}")
   rescue RestClient::NotModified
     false
   end
 
   def updatable?
-    (new_shas - old_shas).length + 100 < Github::API.rate_remaining 
+    diff_shas[:created].length + 100 < Github::API.rate_remaining 
   end
 
   def update_info
@@ -54,7 +64,7 @@ class Repo < ActiveRecord::Base
     self.language = info[:language]
     self.forks = info[:forks]
     self.stars = info[:watchers]
-    self.issues = info[:open_issues]
+    self.issues_count = info[:open_issues]
     self.git_url = info[:git_url]
     self.master_branch = info[:master_branch]
     self.todos_count = todos.count
@@ -62,7 +72,7 @@ class Repo < ActiveRecord::Base
   end
 
   def files
-    self.shas.select { |sha| sha.type == "blob" }
+    shas.select { |sha| sha.type == "blob" }
   end
 
   def info
@@ -77,42 +87,28 @@ class Repo < ActiveRecord::Base
     @tree = response[:tree]
   end
 
-  def modify_shas
-    destroy_shas
-    create_shas
+  def update_shas
+    diff_shas[:destroyed].each { |sha| sha.destroy }
+    Sha.clean(tree)
+      .select { |sha| diff_shas[:created].include?(sha[:sha]) }
+      .each { |sha| shas.create(sha) }
   end
 
-  def current_shas
-    return @current_shas if @current_shas
-    @current_shas = Set.new
-    self.shas.each { |s| current_shas << s[:sha] }
-    @current_shas
+  def diff_shas
+    return @diff if @diff
+    db_shas, gh_shas = Set.new, Set.new
+    shas.each { |s| db_shas << s[:sha] }
+    tree.each { |s| gh_shas << s[:sha] }
+    unchanged_shas = db_shas + gh_shas
+    created_shas = gh_shas - unchanged_shas
+    destroyed_shas = db_shas - unchanged_shas
+    @diff = {destroyed: destroyed_shas, created: created_shas}
   end
 
-  def new_shas
-    return @new_shas if @new_shas
-    @new_shas = Set.new
-    tree.each { |s| new_shas << s[:sha] }
-    @new_shas
-  end
-
-  def old_shas
-    return @old_shas if @old_shas
-    @old_shas = current_shas & new_shas
-  end
-
-  def create_shas
-    to_be_created = new_shas - old_shas
-    to_be_created.each do |sha_string| 
-      tree.each do |tree_sha|
-        shas.create(sha: tree_sha[:sha], path: tree_sha[:path], type: tree_sha[:type]) if tree_sha[:sha] == sha_string
-      end
-    end
-  end
-
-  def destroy_shas
-    to_be_destroyed = current_shas - old_shas
-    to_be_destroyed.each { |sha| sha.destroy }
+  def update_issues
+    issues.each { |issue| issue.destroy }
+    new_issues = Github::API.json_get("repos/#{owner_name}/issues")
+    Issue.clean(new_issues).each { |issue| issues.create(issue) }
   end
 
 end

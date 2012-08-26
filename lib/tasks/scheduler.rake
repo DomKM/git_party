@@ -1,17 +1,32 @@
-# require "#{Rails.root}/lib/modules/crawler"
-# include GHCrawler
-
 desc "These tasks are called by the Heroku scheduler add-on"
 
 
 task :update_repos => :environment do
   Repo.all.each do |repo|
   	begin
-      repo.update!
-  	rescue
+      repo.update_if_possible
+    rescue Exception => e
+      p "Begin Exception: #{e}"
+      p e.message
+      p e.backtrace.inspect
+      p "End Exception: #{e}"
 			next
 		end
 	end
+end
+
+task :update_new_repos => :environment do
+  Repo.unupdated.each do |repo|
+    begin
+      repo.update!
+    rescue Exception => e
+      p "Begin Exception: #{e}"
+      p e.message
+      p e.backtrace.inspect
+      p "End Exception: #{e}"
+      next
+    end
+  end
 end
 
 task :crawl_github => :environment do
@@ -19,8 +34,12 @@ task :crawl_github => :environment do
   	begin
   	repo_hash = {owner_name: repo.downcase}
   	Repo.create(repo_hash) if Repo.real?(repo) && !Repo.exists?(repo_hash)
-  	rescue
-  		next
-  	end
+    rescue Exception => e
+      p "Begin Exception: #{e}"
+      p e.message
+      p e.backtrace.inspect
+      p "End Exception: #{e}"
+      next
+    end
   end
 end

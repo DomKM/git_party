@@ -1,11 +1,18 @@
 class Sha < ActiveRecord::Base
 	self.inheritance_column = nil # Rails reserves the "type" column name for single-table inheritance. This overrides that so we can use "type".
   attr_accessible :path, :sha, :type
-  validates_presence_of :repo, :sha, :path 
+  validates_presence_of :repo
   belongs_to :repo
   has_many :todos, dependent: :destroy
   before_create :add_content
   after_create :create_todos
+
+  def self.clean(tree)
+    tree.each do |tree_sha|
+      tree_sha.keep_if { |key, val| key == :sha || :path || :type }
+    end
+    tree
+  end
 
   private
 
