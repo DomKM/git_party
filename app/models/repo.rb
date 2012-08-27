@@ -25,12 +25,6 @@ class Repo < ActiveRecord::Base
     save
   end
 
-  def update_if_possible
-    destroy unless real?
-    return unless real? && updated? && updatable?
-    update!
-  end
-
   def shas_with_todos
     shas.select { |sha| sha.todos.count > 0 }
   end

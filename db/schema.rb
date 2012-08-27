@@ -11,7 +11,24 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120826025515) do
+ActiveRecord::Schema.define(:version => 20120826235803) do
+
+  create_table "issues", :force => true do |t|
+    t.integer  "repo_id"
+    t.string   "title"
+    t.text     "body"
+    t.string   "html_url"
+    t.integer  "comments"
+    t.datetime "github_created_at"
+    t.datetime "github_updated_at"
+    t.string   "assignee"
+    t.integer  "number"
+    t.string   "creator"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  add_index "issues", ["repo_id"], :name => "index_issues_on_repo_id"
 
   create_table "repos", :force => true do |t|
     t.string   "name"

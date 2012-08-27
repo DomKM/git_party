@@ -4,7 +4,7 @@ desc "These tasks are called by the Heroku scheduler add-on"
 task :update_repos => :environment do
   Repo.all.each do |repo|
   	begin
-      repo.update_if_possible
+      repo.update! if repo.updated? && repo.updatable?
     rescue Exception => e
       p "Begin Exception: #{e}"
       p e.message
