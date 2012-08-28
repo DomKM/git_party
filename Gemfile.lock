@@ -115,6 +115,7 @@ GEM
     hirb (0.6.2)
     hirefireapp (0.0.8)
     i18n (0.6.0)
+    interception (0.1)
     jazz_hands (0.3.1)
       awesome_print (~> 1.0.2)
       coderay (~> 1.0.6)
@@ -173,6 +174,9 @@ GEM
     pry-remote (0.1.6)
       pry (~> 0.9)
       slop (~> 3.0)
+    pry-rescue (0.6)
+      interception
+      pry
     pry-stack_explorer (0.4.5)
       binding_of_caller (~> 0.6.2)
     quiet_assets (1.0.1)
@@ -295,6 +299,7 @@ DEPENDENCIES
   nokogiri
   pg (>= 0.14.0)
   pjax_rails
+  pry-rescue
   quiet_assets
   rails (= 3.2.7)
   rest-client

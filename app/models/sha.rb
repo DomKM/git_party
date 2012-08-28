@@ -1,15 +1,15 @@
 class Sha < ActiveRecord::Base
 	self.inheritance_column = nil # Rails reserves the "type" column name for single-table inheritance. This overrides that so we can use "type".
-  attr_accessible :path, :sha, :type
   validates_presence_of :repo
   belongs_to :repo
   has_many :todos, dependent: :destroy
-  before_create :add_content
-  after_create :create_todos
+  after_create :add_content, :create_todos
+  ATTRIBUTES = [:path, :sha, :type]
+  attr_accessible *ATTRIBUTES
 
   def self.clean(tree)
     tree.each do |tree_sha|
-      tree_sha.keep_if { |key, val| key == :sha || :path || :type }
+      tree_sha.keep_if { |key, val| ATTRIBUTES.include?(key) }
     end
     tree
   end
@@ -19,10 +19,13 @@ class Sha < ActiveRecord::Base
   def add_content
   	return unless file? && extension?
   	self.content = Github::API.http_get("repos/#{repo.owner}/#{repo.name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
+    save
+  rescue
+    return
   end
 
   def create_todos
-  	return unless file? && extension? && todo?
+  	return unless file? && extension? && todo? && lines
   	lines.each_with_index do |line, index|
       if todo?(line)
         todo_content = []

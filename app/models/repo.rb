@@ -3,8 +3,9 @@ class Repo < ActiveRecord::Base
   attr_accessible :owner_name
   validates_presence_of :owner_name
   validates_uniqueness_of :owner_name
-  has_many :shas, :issues, dependent: :destroy
+  has_many :shas, dependent: :destroy
   has_many :todos, through: :shas
+  has_many :issues, dependent: :destroy
   before_create :update_info
 
 
@@ -76,8 +77,8 @@ class Repo < ActiveRecord::Base
 
   def tree
     return @tree if @tree
-    path = "repos/#{owner_name}/git/trees/#{master_branch}"
-    response = Github::API.json_get(path, params: {recursive: true})
+    path = "repos/#{owner_name}/git/trees/#{master_branch}?recursive=1"
+    response = Github::API.json_get(path)
     @tree = response[:tree]
   end
 
@@ -89,11 +90,10 @@ class Repo < ActiveRecord::Base
   end
 
   def diff_shas
-    return @diff if @diff
     db_shas, gh_shas = Set.new, Set.new
     shas.each { |s| db_shas << s[:sha] }
     tree.each { |s| gh_shas << s[:sha] }
-    unchanged_shas = db_shas + gh_shas
+    unchanged_shas = db_shas & gh_shas
     created_shas = gh_shas - unchanged_shas
     destroyed_shas = db_shas - unchanged_shas
     @diff = {destroyed: destroyed_shas, created: created_shas}

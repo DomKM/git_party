@@ -4,6 +4,7 @@
   <tr>
     <th><div class = 'tabletitle'>Owner/Name</div> </th>
     <th><div class = 'tabletitle'>Todos</div> </th>
+    <th><div class = 'tabletitle'>Issues</div> </th>
     <th><div class = 'tabletitle'>Language</div> </th>
   </tr>
 
@@ -18,7 +19,9 @@
       <td><div class = 'tablename'>
           <%= "#{repo.owner}/#{repo.name}" %></div></td>
       <td><div class = 'tablecount'>
-          <%= "#{repo.todos.count}" %></div></td>
+          <%= "#{repo.todos_count}" %></div></td>
+      <td><div class = 'tablecount'>
+          <%= "#{repo.issues_count}" %></div></td>
       <td><div class = 'tablela'>
           <%= "#{repo.language}" %></div></td>
     </tr>

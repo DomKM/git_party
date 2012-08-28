@@ -1,10 +1,17 @@
 class Issue < ActiveRecord::Base
 	belongs_to :repo
 	validates_presence_of :repo
+  ATTRIBUTES = [:number, 
+                :title, 
+                :body, 
+                :comments, 
+                :html_url, 
+                :assignee, 
+                :creator, 
+                :github_updated_at, 
+                :github_created_at]
   attr_accessible *ATTRIBUTES
-
-  ATTRIBUTES = [:number, :title, :body, :comments, :html_url, :assignee, :creator, :github_updated_at, :github_created_at]
-
+  
   def self.clean(issues)
   	issues.keep_if { |issue| issue[:state] == "open" }
   	issues.each do |issue|

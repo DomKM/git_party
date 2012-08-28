@@ -11,11 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120826235803) do
+ActiveRecord::Schema.define(:version => 20120827005416) do
 
   create_table "issues", :force => true do |t|
     t.integer  "repo_id"
-    t.string   "title"
+    t.text     "title"
     t.text     "body"
     t.string   "html_url"
     t.integer  "comments"
