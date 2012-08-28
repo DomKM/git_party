@@ -59,7 +59,7 @@ class Repo < ActiveRecord::Base
     self.language = info[:language]
     self.forks = info[:forks]
     self.stars = info[:watchers]
-    self.issues_count = info[:open_issues]
+    self.issues_count = info[:open_issues] unless issues.count == 0
     self.git_url = info[:git_url]
     self.master_branch = info[:master_branch]
     self.todos_count = todos.count
@@ -103,6 +103,8 @@ class Repo < ActiveRecord::Base
     issues.each { |issue| issue.destroy }
     new_issues = Github::API.json_get("repos/#{owner_name}/issues")
     Issue.clean(new_issues).each { |issue| issues.create(issue) }
+  rescue 
+    return self.issues_count = 0
   end
 
 end
