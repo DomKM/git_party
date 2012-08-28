@@ -25,6 +25,7 @@ group :development, :test do
     gem 'guard-spin'
     gem 'fakeweb'
     gem 'jazz_hands'
+    gem 'pry-rescue'
 end
 
 group :production do

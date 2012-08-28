@@ -1,4 +1,3 @@
-<%= render 'layouts/header' %>
 <div class ='title'>
   <%= "#{@repo.owner}/#{@repo.name}" %>
 </div>
@@ -46,8 +45,13 @@
       </tr>
 
       <tr>
+        <td><div class ='tablefield'>Todos:</td>
+        <td><%= "#{@repo.todos_count}" %></td>
+      </tr>
+
+      <tr>
         <td><div class ='tablefield'>Issues:</td>
-        <td><%= "#{@repo.issues}" %></td>
+        <td><%= "#{@repo.issues_count}" %></td>
       </tr>
 
       <tr>

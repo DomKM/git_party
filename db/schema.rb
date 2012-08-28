@@ -11,7 +11,24 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120825171632) do
+ActiveRecord::Schema.define(:version => 20120827005416) do
+
+  create_table "issues", :force => true do |t|
+    t.integer  "repo_id"
+    t.text     "title"
+    t.text     "body"
+    t.string   "html_url"
+    t.integer  "comments"
+    t.datetime "github_created_at"
+    t.datetime "github_updated_at"
+    t.string   "assignee"
+    t.integer  "number"
+    t.string   "creator"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  add_index "issues", ["repo_id"], :name => "index_issues_on_repo_id"
 
   create_table "repos", :force => true do |t|
     t.string   "name"
@@ -25,7 +42,7 @@ ActiveRecord::Schema.define(:version => 20120825171632) do
     t.string   "language"
     t.integer  "forks"
     t.integer  "stars"
-    t.integer  "issues"
+    t.integer  "issues_count"
     t.string   "git_url"
     t.string   "master_branch"
     t.string   "owner_name"
@@ -37,7 +54,7 @@ ActiveRecord::Schema.define(:version => 20120825171632) do
   add_index "repos", ["github_created_at"], :name => "index_repos_on_github_created_at"
   add_index "repos", ["github_updated_at"], :name => "index_repos_on_github_updated_at"
   add_index "repos", ["homepage"], :name => "index_repos_on_homepage"
-  add_index "repos", ["issues"], :name => "index_repos_on_issues"
+  add_index "repos", ["issues_count"], :name => "index_repos_on_issues_count"
   add_index "repos", ["language"], :name => "index_repos_on_language"
   add_index "repos", ["name"], :name => "index_repos_on_name"
   add_index "repos", ["owner"], :name => "index_repos_on_owner"

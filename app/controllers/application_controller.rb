@@ -1,6 +1,11 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   layout :set_layout
+  around_filter :pry_rescue if Rails.env == 'development'
+
+  def pry_rescue
+    Pry::rescue{ yield }
+  end
 
   def pjax?
   	return true if request.headers['X-PJAX']
