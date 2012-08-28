@@ -83,7 +83,7 @@ class Repo < ActiveRecord::Base
   end
 
   def update_shas
-    diff_shas[:destroyed].each { |sha| sha.destroy }
+    diff_shas[:destroyed].each { |sha| Sha.find_by_sha(sha).destroy }
     Sha.clean(tree)
       .select { |sha| diff_shas[:created].include?(sha[:sha]) }
       .each { |sha| shas.create(sha) }
