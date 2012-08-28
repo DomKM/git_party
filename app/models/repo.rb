@@ -18,8 +18,7 @@ class Repo < ActiveRecord::Base
   end
 
   def update!
-    destroy unless real?
-    return unless destroyed?
+    return destroy unless real?
     update_shas
     update_issues
     update_info
@@ -64,6 +63,8 @@ class Repo < ActiveRecord::Base
     self.master_branch = info[:master_branch]
     self.todos_count = todos.count
     owner_name.downcase!
+  rescue Exception => e 
+    raise e
   end
 
   def files
@@ -100,11 +101,11 @@ class Repo < ActiveRecord::Base
   end
 
   def update_issues
-    issues.each { |issue| issue.destroy }
+    issues.each { |issue| issue.destroy } unless diff_shas[:destroyed].empty?
     new_issues = Github::API.json_get("repos/#{owner_name}/issues")
     Issue.clean(new_issues).each { |issue| issues.create(issue) }
   rescue 
-    return self.issues_count = 0
+    self.issues_count = 0
   end
 
 end
