@@ -19,13 +19,11 @@ class Sha < ActiveRecord::Base
   def add_content
   	return unless file? && extension?
   	self.content = Github::API.http_get("repos/#{repo.owner_name}/git/blobs/#{sha}", :accept => "application/vnd.github-blob.raw")
-    save
-  rescue
-    return
+    self.content = nil unless valid_content? 
   end
 
   def create_todos
-  	return unless file? && extension? && todo? && lines
+  	return unless file? && extension? && valid_content? && todo? && lines
   	lines.each_with_index do |line, index|
       if todo?(line)
         todo_content = []
@@ -55,5 +53,9 @@ class Sha < ActiveRecord::Base
   def filetype
   	path.match(/\.\w+/i)[0][1..-1]
   end
-
+  
+  def valid_content?
+    return false if content.nil?
+    content.force_encoding("UTF-8").valid_encoding?
+  end
 end
